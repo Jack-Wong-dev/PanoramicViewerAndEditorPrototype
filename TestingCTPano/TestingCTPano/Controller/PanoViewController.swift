@@ -11,7 +11,6 @@ import UIKit
 class PanoViewController: UIViewController {
     
     lazy private var panoView: CTPanoramaView = {
-        
         let pV = CTPanoramaView()
         return pV
     }()
@@ -46,12 +45,13 @@ class PanoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        commonInit()
         loadSphericalImage()
         // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        commonInit()
+        
     }
     
 }
@@ -73,18 +73,19 @@ extension PanoViewController{
         
     }
     
-//    @objc func panoramaTypeTapped() {
-//
-//        if panoView.panoramaType == .spherical {
-//            loadCylindricalImage()
-//        } else {
-//            loadSphericalImage()
-//        }
-//    }
+    //Not needed
+    @objc func panoramaTypeTapped() {
+        
+        if panoView.panoramaType == .spherical {
+            loadCylindricalImage()
+        } else {
+            loadSphericalImage()
+        }
+    }
     
-    //    private func loadCylindricalImage() {
-    //        self.panoView.image = UIImage(named: "cylindrical")
-    //    }
+    private func loadCylindricalImage() {
+        self.panoView.image = UIImage(named: "cylindrical")
+    }
 }
 
 

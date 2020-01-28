@@ -319,8 +319,8 @@ private extension CMDeviceMotion {
         let attitudeQuanternion = GLKQuaternion(quanternion: attitude)
 
         let result: SCNVector4
-
-        switch UIApplication.shared.statusBarOrientation {
+        
+        switch UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
 
         case .landscapeRight:
             let cq1 = GLKQuaternionMakeWithAngleAndAxis(.pi/2, 0, 1, 0)
