@@ -51,6 +51,13 @@ import ImageIO
     @objc public var panoramaType: CTPanoramaType = .cylindrical {
         didSet {
             createGeometryNode()
+            
+            createHotSpotNode(position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+            
+            createHotSpotNode(position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+            
+            createHotSpotNode(position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+            
             resetCameraAngles()
         }
     }
@@ -71,6 +78,10 @@ import ImageIO
     private var geometryNode: SCNNode?
     private var prevLocation = CGPoint.zero
     private var prevBounds = CGRect.zero
+    
+    
+    //hotspot
+    private var hotSpotNode: SCNNode?
     
     private lazy var cameraNode: SCNNode = {
         let node = SCNNode()
@@ -156,16 +167,16 @@ import ImageIO
         
         switchControlMethod(to: controlMethod)
         
-//        //new code
+        //        //new code
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-               sceneView.addGestureRecognizer(tapGesture)
-
+        sceneView.addGestureRecognizer(tapGesture)
+        
     }
     
     @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
         let sV = sceneView
-
+        
         // check what nodes are tapped
         let p = gestureRecognize.location(in: sV)
         let hitResults = sceneView.hitTest(p, options: [:])
@@ -177,12 +188,12 @@ import ImageIO
             let vect:SCNVector3 = result.localCoordinates
             
             print(vect)
-
-//            print(result.node.name!)
-//            print(result.textureCoordinates(withMappingChannel: 0)) // This line is added here.
-//            print("x: \(p.x) y: \(p.y)") // <--- THIS IS WHERE I PRINT THE COORDINATES
-
-
+            
+            //            print(result.node.name!)
+            //            print(result.textureCoordinates(withMappingChannel: 0)) // This line is added here.
+            //            print("x: \(p.x) y: \(p.y)") // <--- THIS IS WHERE I PRINT THE COORDINATES
+            
+            
         }
     }
     
@@ -195,20 +206,19 @@ import ImageIO
         
         let material = SCNMaterial()
         
-        
         //Test Code
         var materials = [SCNMaterial]()
         for someImage in images{
             
             let someMaterial = SCNMaterial()
-                
-                someMaterial.diffuse.contents = someImage
-                someMaterial.diffuse.mipFilter = .nearest
-                someMaterial.diffuse.magnificationFilter = .nearest
-                someMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
-                someMaterial.diffuse.wrapS = .repeat
-                someMaterial.cullMode = .front
-                
+            
+            someMaterial.diffuse.contents = someImage
+            someMaterial.diffuse.mipFilter = .nearest
+            someMaterial.diffuse.magnificationFilter = .nearest
+            someMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
+            someMaterial.diffuse.wrapS = .repeat
+            someMaterial.cullMode = .front
+            
             materials.append(someMaterial)
             
         }
@@ -236,7 +246,7 @@ import ImageIO
             //            sphere.firstMaterial = material
             sphere.materials = materials
             sphere.firstMaterial = sphere.materials[0]
-        
+            
             
             let sphereNode = SCNNode()
             sphereNode.geometry = sphere
@@ -252,6 +262,20 @@ import ImageIO
             geometryNode = tubeNode
         }
         scene.rootNode.addChildNode(geometryNode!)
+    }
+    
+    private func createHotSpotNode(position: SCNVector3){
+
+        if panoramaType == .spherical {
+            let sphere = SCNSphere(radius: 0.2)
+            sphere.firstMaterial?.diffuse.contents = UIColor.green
+            
+            let newHotSpotNode = SCNNode()
+            newHotSpotNode.geometry = sphere
+            newHotSpotNode.position = position
+            hotSpotNode = newHotSpotNode
+        }
+        geometryNode?.addChildNode(hotSpotNode!)
     }
     
     
