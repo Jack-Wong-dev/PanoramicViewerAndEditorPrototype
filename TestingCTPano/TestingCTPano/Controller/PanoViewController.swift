@@ -134,3 +134,29 @@ extension PanoViewController {
     
     
 }
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+struct PanoViewRepresentable: UIViewControllerRepresentable {
+    func makeUIViewController(context: UIViewControllerRepresentableContext<PanoViewRepresentable>) -> UIViewController {
+        return PanoViewController()
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<PanoViewRepresentable>) {
+        
+    }
+}
+
+struct PanoSampleView: View {
+    var body: some View{
+        PanoViewRepresentable()
+    }
+}
+
+@available(iOS 13.0, *)
+struct PanoViewRepresentable_Preview: PreviewProvider {
+    static var previews: some View {
+        PanoSampleView()
+    }
+}
+#endif

@@ -85,3 +85,28 @@ extension CTPieSliceView: CTPanoramaCompass {
         transform = CGAffineTransform.identity.rotated(by: rotationAngle)
     }
 }
+
+#if canImport(SwiftUI) && DEBUG
+import SwiftUI
+struct PieSliceRepresentable: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        return CTPieSliceView()
+    }
+    
+    func updateUIView(_ view: UIView, context: Context) {
+    }
+}
+
+struct PieSliceSampleView: View {
+    var body: some View{
+        PieSliceRepresentable()
+    }
+}
+
+@available(iOS 13.0, *)
+struct PieSliceSampleView_Preview: PreviewProvider {
+    static var previews: some View {
+        PieSliceSampleView()
+    }
+}
+#endif

@@ -52,11 +52,11 @@ import ImageIO
         didSet {
             createGeometryNode()
             
-            createHotSpotNode(position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+            createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
             
-            createHotSpotNode(position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+            createHotSpotNode(name: "Classroom 3", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
             
-            createHotSpotNode(position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+            createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
             
             resetCameraAngles()
         }
@@ -166,36 +166,9 @@ import ImageIO
         sceneView.backgroundColor = UIColor.black
         
         switchControlMethod(to: controlMethod)
-        
-        //        //new code
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        sceneView.addGestureRecognizer(tapGesture)
-        
     }
     
-    @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let sV = sceneView
-        
-        // check what nodes are tapped
-        let p = gestureRecognize.location(in: sV)
-        let hitResults = sceneView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result: SCNHitTestResult = hitResults[0]
-            
-            let vect:SCNVector3 = result.localCoordinates
-            
-            print(vect)
-            
-            //            print(result.node.name!)
-            //            print(result.textureCoordinates(withMappingChannel: 0)) // This line is added here.
-            //            print("x: \(p.x) y: \(p.y)") // <--- THIS IS WHERE I PRINT THE COORDINATES
-            
-            
-        }
-    }
+    
     
     // MARK: Configuration helper methods
     
@@ -264,8 +237,8 @@ import ImageIO
         scene.rootNode.addChildNode(geometryNode!)
     }
     
-    private func createHotSpotNode(position: SCNVector3){
-
+    private func createHotSpotNode(name: String, position: SCNVector3){
+        
         if panoramaType == .spherical {
             let sphere = SCNSphere(radius: 0.2)
             sphere.firstMaterial?.diffuse.contents = UIColor.green
@@ -273,11 +246,26 @@ import ImageIO
             let newHotSpotNode = SCNNode()
             newHotSpotNode.geometry = sphere
             newHotSpotNode.position = position
-            hotSpotNode = newHotSpotNode
+            newHotSpotNode.name = name
+            //            hotSpotNode = newHotSpotNode
+            geometryNode?.addChildNode(newHotSpotNode)
         }
-        geometryNode?.addChildNode(hotSpotNode!)
+        
+        
+        //        let annotationNode = createAnnotationNode(name: name, position: position)
+        //        hotSpotNode?.addChildNode(annotationNode)
     }
     
+    private func createAnnotationNode(name: String, position: SCNVector3) -> SCNNode{
+        let sphere = SCNSphere(radius: 0.2)
+        sphere.firstMaterial?.diffuse.contents = UIColor.blue
+        
+        let newHotSpotNode = SCNNode()
+        newHotSpotNode.geometry = sphere
+        newHotSpotNode.position = SCNVector3Make(position.x, position.y + 2, position.z)
+        newHotSpotNode.name = name
+        return newHotSpotNode
+    }
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
         overlayView?.removeFromSuperview()
@@ -294,6 +282,9 @@ import ImageIO
             
             let pinchRec = UIPinchGestureRecognizer(target: self, action: #selector(handlePinch(pinchRec:)))
             sceneView.addGestureRecognizer(pinchRec)
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+            sceneView.addGestureRecognizer(tapGesture)
             
             if motionManager.isDeviceMotionActive {
                 motionManager.stopDeviceMotionUpdates()
@@ -389,6 +380,39 @@ import ImageIO
             break
         }
     }
+    
+    @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        // retrieve the SCNView
+        if gestureRecognize.state == .ended{
+            
+            let scnView = sceneView
+            
+            // check what nodes are tapped
+            let touchLocation = gestureRecognize.location(in: scnView)
+            let hitResults = scnView.hitTest(touchLocation, options: nil)
+            // check that we clicked on at least one object
+            //            if hitResults.count > 0 {
+            //                // retrieved the first clicked object
+            //
+            //
+            //                let result: SCNHitTestResult = hitResults[0]
+            //                let vect:SCNVector3 = result.localCoordinates
+            //                print(result.node.name!)
+            //                print(vect)
+            //            }
+            if let result = hitResults.first {
+                if let nodeName = result.node.name{
+                    print("You tapped on \(nodeName)")
+                    
+                    self.makeToast("You tapped on \(nodeName)")
+                    
+                }else{
+                    print("You tapped on nothing")
+                }
+            }
+        }
+    }
+    
     
     public override func layoutSubviews() {
         super.layoutSubviews()
