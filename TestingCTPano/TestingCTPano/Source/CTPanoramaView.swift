@@ -27,7 +27,11 @@ import ImageIO
 
 @objc public class CTPanoramaView: UIView {
     
-    let images = [UIImage(named: "pursuit"), UIImage(named: "spherical")]
+    let images = [UIImage(named: "pursuit"), UIImage(named: "spherical"), UIImage(named: "classroom2")]
+    
+    let pursuitRoom = Room(imageURL: "pursuit", hotspots: [Hotspot(name: "Classroom 2", coordinates: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)),Hotspot(name: "TV", coordinates: SCNVector3Make(-2.0663686,-0.24952725,-9.780738)),Hotspot(name: "Hallway", coordinates: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))])
+    
+    
     
     // MARK: Public properties
     
@@ -54,7 +58,7 @@ import ImageIO
             
             createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
             
-            createHotSpotNode(name: "Classroom 3", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+            createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
             
             createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
             
@@ -218,7 +222,7 @@ import ImageIO
             sphere.segmentCount = 300
             //            sphere.firstMaterial = material
             sphere.materials = materials
-            sphere.firstMaterial = sphere.materials[0]
+            sphere.firstMaterial = sphere.materials[2]
             
             
             let sphereNode = SCNNode()
@@ -247,13 +251,9 @@ import ImageIO
             newHotSpotNode.geometry = sphere
             newHotSpotNode.position = position
             newHotSpotNode.name = name
-            //            hotSpotNode = newHotSpotNode
             geometryNode?.addChildNode(newHotSpotNode)
         }
-        
-        
-        //        let annotationNode = createAnnotationNode(name: name, position: position)
-        //        hotSpotNode?.addChildNode(annotationNode)
+
     }
     
     private func createAnnotationNode(name: String, position: SCNVector3) -> SCNNode{
@@ -406,6 +406,7 @@ import ImageIO
                     
                     self.makeToast("You tapped on \(nodeName)")
                     
+//                    showToast(controller: self.window!.rootViewController!, message: "You tapped on \(nodeName)", seconds: 2)
                 }else{
                     print("You tapped on nothing")
                 }
