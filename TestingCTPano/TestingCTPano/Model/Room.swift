@@ -11,6 +11,7 @@ import SceneKit
 
 struct Room {
     var imageURL: String
+//    var nearbyRooms: [Room : Hotspot]
     var hotspots: [Hotspot]
 }
 

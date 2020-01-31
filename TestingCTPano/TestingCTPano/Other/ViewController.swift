@@ -18,7 +18,7 @@ class AlternateViewController: UIViewController {
         super.viewDidLoad()
         
         view.addSubview(mainView)
-        mainView.loadSphericalImage()
+//        mainView.loadSphericalImage()
     }
     
 //    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

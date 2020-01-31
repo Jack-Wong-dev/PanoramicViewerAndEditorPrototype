@@ -75,15 +75,15 @@ class MainView: UIView {
     //        }
     //    }
     
-    func loadSphericalImage() {
-        
-        self.panoView.image = UIImage(named: "pursuit")
-        
-    }
-    
-    func loadCylindricalImage() {
-        self.panoView.image = UIImage(named: "cylindrical")
-    }
+//    func loadSphericalImage() {
+//        
+//        self.panoView.image = UIImage(named: "pursuit")
+//        
+//    }
+//    
+//    func loadCylindricalImage() {
+//        self.panoView.image = UIImage(named: "cylindrical")
+//    }
     
 
     

@@ -20,17 +20,13 @@ import ImageIO
     case touch
 }
 
-@objc public enum CTPanoramaType: Int {
-    case cylindrical
-    case spherical
-}
-
 @objc public class CTPanoramaView: UIView {
     
     let images = [UIImage(named: "pursuit"), UIImage(named: "spherical"), UIImage(named: "classroom2")]
     
     let pursuitRoom = Room(imageURL: "pursuit", hotspots: [Hotspot(name: "Classroom 2", coordinates: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)),Hotspot(name: "TV", coordinates: SCNVector3Make(-2.0663686,-0.24952725,-9.780738)),Hotspot(name: "Hallway", coordinates: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))])
     
+    let classroom2 = Room(imageURL: "classroom2", hotspots: [Hotspot(name: "Flex Space", coordinates: SCNVector3(x: 1.0204816, y: -0.6144954, z: 9.92852))])
     
     
     // MARK: Public properties
@@ -40,29 +36,10 @@ import ImageIO
     @objc public var panSpeed = CGPoint(x: 0.005, y: 0.005)
     @objc public var startAngle: Float = 0
     
-    @objc public var image: UIImage? {
-        didSet {
-            panoramaType = panoramaTypeForCurrentImage
-        }
-    }
     
     @objc public var overlayView: UIView? {
         didSet {
             replace(overlayView: oldValue, with: overlayView)
-        }
-    }
-    
-    @objc public var panoramaType: CTPanoramaType = .cylindrical {
-        didSet {
-            createGeometryNode()
-            
-            createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
-            
-            createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
-            
-            createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
-            
-            resetCameraAngles()
         }
     }
     
@@ -127,14 +104,6 @@ import ImageIO
         }
     }
     
-    private var panoramaTypeForCurrentImage: CTPanoramaType {
-        if let image = image {
-            if image.size.width / image.size.height == 2 {
-                return .spherical
-            }
-        }
-        return .cylindrical
-    }
     
     // MARK: Class lifecycle methods
     
@@ -151,7 +120,7 @@ import ImageIO
     public convenience init(frame: CGRect, image: UIImage) {
         self.init(frame: frame)
         // Force Swift to call the property observer by calling the setter from a non-init context
-        ({ self.image = image })()
+        commonInit()
     }
     
     deinit {
@@ -165,11 +134,21 @@ import ImageIO
         
         scene.rootNode.addChildNode(cameraNode)
         yFov = 80
-        
+        resetCameraAngles()
         sceneView.scene = scene
         sceneView.backgroundColor = UIColor.black
         
         switchControlMethod(to: controlMethod)
+        
+        //This should ideally not be here
+        createGeometryNode()
+        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+        
+        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+        
+        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+        //end
+        
     }
     
     
@@ -177,13 +156,11 @@ import ImageIO
     // MARK: Configuration helper methods
     
     private func createGeometryNode() {
-        guard let image = image else {return}
         
-        geometryNode?.removeFromParentNode()
+        if geometryNode != nil{
+            geometryNode?.removeFromParentNode()
+        }
         
-        let material = SCNMaterial()
-        
-        //Test Code
         var materials = [SCNMaterial]()
         for someImage in images{
             
@@ -200,72 +177,35 @@ import ImageIO
             
         }
         
-        //Assign texture
-        material.diffuse.contents = image
+        let sphere = SCNSphere(radius: radius)
+        sphere.segmentCount = 300
+        //            sphere.firstMaterial = material
         
-        //Make Property contents smaller in size
-        material.diffuse.mipFilter = .nearest
+        sphere.materials = materials
+        sphere.firstMaterial = sphere.materials[2]
         
-        //Render property contents larger
-        material.diffuse.magnificationFilter = .nearest
         
-        //(-1,1,1) means we're flipping horizantally
-        material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
+        let sphereNode = SCNNode()
+        sphereNode.geometry = sphere
+        geometryNode = sphereNode
+
         
-        material.diffuse.wrapS = .repeat
-        
-        //Not rendering the back surfaces, just the front
-        material.cullMode = .front
-        
-        if panoramaType == .spherical {
-            let sphere = SCNSphere(radius: radius)
-            sphere.segmentCount = 300
-            //            sphere.firstMaterial = material
-            sphere.materials = materials
-            sphere.firstMaterial = sphere.materials[2]
-            
-            
-            let sphereNode = SCNNode()
-            sphereNode.geometry = sphere
-            geometryNode = sphereNode
-        } else {
-            let tube = SCNTube(innerRadius: radius, outerRadius: radius, height: fovHeight)
-            tube.heightSegmentCount = 50
-            tube.radialSegmentCount = 300
-            tube.firstMaterial = material
-            
-            let tubeNode = SCNNode()
-            tubeNode.geometry = tube
-            geometryNode = tubeNode
-        }
-        scene.rootNode.addChildNode(geometryNode!)
+        guard let photoSphereNode = geometryNode else {return}
+        scene.rootNode.addChildNode(photoSphereNode)
+        resetCameraAngles()
     }
     
     private func createHotSpotNode(name: String, position: SCNVector3){
-        
-        if panoramaType == .spherical {
-            let sphere = SCNSphere(radius: 0.2)
-            sphere.firstMaterial?.diffuse.contents = UIColor.green
-            
-            let newHotSpotNode = SCNNode()
-            newHotSpotNode.geometry = sphere
-            newHotSpotNode.position = position
-            newHotSpotNode.name = name
-            geometryNode?.addChildNode(newHotSpotNode)
-        }
-
-    }
-    
-    private func createAnnotationNode(name: String, position: SCNVector3) -> SCNNode{
         let sphere = SCNSphere(radius: 0.2)
-        sphere.firstMaterial?.diffuse.contents = UIColor.blue
+        sphere.firstMaterial?.diffuse.contents = UIColor.green
         
         let newHotSpotNode = SCNNode()
         newHotSpotNode.geometry = sphere
-        newHotSpotNode.position = SCNVector3Make(position.x, position.y + 2, position.z)
+        newHotSpotNode.position = position
         newHotSpotNode.name = name
-        return newHotSpotNode
+        geometryNode?.addChildNode(newHotSpotNode)
     }
+    
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
         overlayView?.removeFromSuperview()
@@ -307,16 +247,7 @@ import ImageIO
                                                     var userHeading = .pi - atan2(rotationMatrix.m32, rotationMatrix.m31)
                                                     userHeading += .pi/2
                                                     
-                                                    DispatchQueue.main.async {
-                                                        if panoramaView.panoramaType == .cylindrical {
-                                                            // Prevent vertical movement in a cylindrical panorama
-                                                            panoramaView.cameraNode.eulerAngles = SCNVector3Make(0, panoramaView.startAngle + Float(-userHeading), 0)
-                                                        } else {
-                                                            // Use quaternions when in spherical mode to prevent gimbal lock
-                                                            panoramaView.cameraNode.orientation = motionData.orientation()
-                                                        }
-                                                        panoramaView.reportMovement(CGFloat(userHeading), panoramaView.xFov.toRadians())
-                                                    }
+
             })
         }
     }
@@ -340,10 +271,6 @@ import ImageIO
             prevLocation = CGPoint.zero
         } else if panRec.state == .changed {
             var modifiedPanSpeed = panSpeed
-            
-            if panoramaType == .cylindrical {
-                modifiedPanSpeed.y = 0 // Prevent vertical movement in a cylindrical panorama
-            }
             
             let location = panRec.translation(in: sceneView)
             let orientation = cameraNode.eulerAngles
@@ -387,26 +314,20 @@ import ImageIO
             
             let scnView = sceneView
             
-            // check what nodes are tapped
+            //MARK:- Check what nodes are tapped
             let touchLocation = gestureRecognize.location(in: scnView)
             let hitResults = scnView.hitTest(touchLocation, options: nil)
-            // check that we clicked on at least one object
-            //            if hitResults.count > 0 {
-            //                // retrieved the first clicked object
-            //
-            //
-            //                let result: SCNHitTestResult = hitResults[0]
-            //                let vect:SCNVector3 = result.localCoordinates
-            //                print(result.node.name!)
-            //                print(vect)
-            //            }
+            //MARK:- Show tapped coordinates
+                        if hitResults.count > 0 {
+                            // retrieved the first clicked object
+                            let result: SCNHitTestResult = hitResults[0]
+                            let vect:SCNVector3 = result.localCoordinates
+                            print(vect)
+                        }
             if let result = hitResults.first {
                 if let nodeName = result.node.name{
-                    print("You tapped on \(nodeName)")
-                    
+                
                     self.makeToast("You tapped on \(nodeName)")
-                    
-//                    showToast(controller: self.window!.rootViewController!, message: "You tapped on \(nodeName)", seconds: 2)
                 }else{
                     print("You tapped on nothing")
                 }

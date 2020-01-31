@@ -46,7 +46,7 @@ class PanoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         commonInit()
-        loadSphericalImage()
+//        loadSphericalImage()
         // Do any additional setup after loading the view.
     }
     
@@ -67,25 +67,25 @@ extension PanoViewController{
         }
     }
     
-    private func loadSphericalImage() {
-        
-        self.panoView.image = UIImage(named: "pursuit")
-        
-    }
-    
-    //Not needed
-    @objc func panoramaTypeTapped() {
-        
-        if panoView.panoramaType == .spherical {
-            loadCylindricalImage()
-        } else {
-            loadSphericalImage()
-        }
-    }
-    
-    private func loadCylindricalImage() {
-        self.panoView.image = UIImage(named: "cylindrical")
-    }
+//    private func loadSphericalImage() {
+//
+//        self.panoView.image = UIImage(named: "pursuit")
+//
+//    }
+//
+//    //Not needed
+//    @objc func panoramaTypeTapped() {
+//
+//        if panoView.panoramaType == .spherical {
+//            loadCylindricalImage()
+//        } else {
+//            loadSphericalImage()
+//        }
+//    }
+//
+//    private func loadCylindricalImage() {
+//        self.panoView.image = UIImage(named: "cylindrical")
+//    }
 }
 
 
