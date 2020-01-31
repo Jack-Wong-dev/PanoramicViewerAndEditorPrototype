@@ -11,6 +11,13 @@ import SceneKit
 import CoreMotion
 import ImageIO
 
+
+struct info {
+    static let pursuitGraph = Graph()
+    static let flexSpace = pursuitGraph.addRoom(name: "flexSpace")
+    static let classroom2 = pursuitGraph.addRoom(name: "classroom2")
+}
+
 @objc public protocol CTPanoramaCompass {
     func updateUI(rotationAngle: CGFloat, fieldOfViewAngle: CGFloat)
 }
@@ -24,9 +31,9 @@ import ImageIO
     
     let images = [UIImage(named: "pursuit"), UIImage(named: "spherical"), UIImage(named: "classroom2")]
     
-    let pursuitRoom = Room(imageURL: "pursuit", hotspots: [Hotspot(name: "Classroom 2", coordinates: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)),Hotspot(name: "TV", coordinates: SCNVector3Make(-2.0663686,-0.24952725,-9.780738)),Hotspot(name: "Hallway", coordinates: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))])
-    
-    let classroom2 = Room(imageURL: "classroom2", hotspots: [Hotspot(name: "Flex Space", coordinates: SCNVector3(x: 1.0204816, y: -0.6144954, z: 9.92852))])
+//    let pursuitRoom = Room(imageURL: "pursuit", hotspots: [Hotspot(name: "Classroom 2", coordinates: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)),Hotspot(name: "TV", coordinates: SCNVector3Make(-2.0663686,-0.24952725,-9.780738)),Hotspot(name: "Hallway", coordinates: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))])
+//
+//    let classroom2 = Room(imageURL: "classroom2", hotspots: [Hotspot(name: "Flex Space", coordinates: SCNVector3(x: 1.0204816, y: -0.6144954, z: 9.92852))])
     
     
     // MARK: Public properties
@@ -59,6 +66,9 @@ import ImageIO
     private var geometryNode: SCNNode?
     private var prevLocation = CGPoint.zero
     private var prevBounds = CGRect.zero
+    
+    private var pursuitGraph = Graph()
+    private var isFlexSpace = true
     
     
     //hotspot
@@ -130,6 +140,15 @@ import ImageIO
     }
     
     private func commonInit() {
+        
+        let flexSpace = pursuitGraph.addRoom(name: "flexSpace")
+        let classroom2 = pursuitGraph.addRoom(name: "classroom2")
+        let hallway = pursuitGraph.addRoom(name: "hallway")
+        
+        
+//        SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)
+        pursuitGraph.addHotspot(source: flexSpace, neighbor: classroom2, coordinates: (-9.892502, -0.8068286, -1.216294))
+        
         add(view: sceneView)
         
         scene.rootNode.addChildNode(cameraNode)
@@ -142,11 +161,15 @@ import ImageIO
         
         //This should ideally not be here
         createGeometryNode()
-        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
         
-        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
-        
-        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+        for hotspot in flexSpace.hotspots {
+            createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+        }
+//        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+//
+//        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+//
+//        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
         //end
         
     }
@@ -182,7 +205,12 @@ import ImageIO
         //            sphere.firstMaterial = material
         
         sphere.materials = materials
-        sphere.firstMaterial = sphere.materials[2]
+        
+        if isFlexSpace{
+            sphere.firstMaterial = sphere.materials[0]
+        }else{
+            sphere.firstMaterial = sphere.materials[2]
+        }
         
         
         let sphereNode = SCNNode()
@@ -195,16 +223,26 @@ import ImageIO
         resetCameraAngles()
     }
     
-    private func createHotSpotNode(name: String, position: SCNVector3){
-        let sphere = SCNSphere(radius: 0.2)
-        sphere.firstMaterial?.diffuse.contents = UIColor.green
-        
-        let newHotSpotNode = SCNNode()
-        newHotSpotNode.geometry = sphere
-        newHotSpotNode.position = position
-        newHotSpotNode.name = name
-        geometryNode?.addChildNode(newHotSpotNode)
-    }
+//    private func createHotSpotNode(name: String, position: SCNVector3){
+//        let sphere = SCNSphere(radius: 0.2)
+//        sphere.firstMaterial?.diffuse.contents = UIColor.green
+//
+//        let newHotSpotNode = SCNNode()
+//        newHotSpotNode.geometry = sphere
+//        newHotSpotNode.position = position
+//        newHotSpotNode.name = name
+//        geometryNode?.addChildNode(newHotSpotNode)
+//    }
+    
+    private func createHotSpotNode(position: SCNVector3){
+         let sphere = SCNSphere(radius: 0.2)
+         sphere.firstMaterial?.diffuse.contents = UIColor.green
+         
+         let newHotSpotNode = SCNNode()
+         newHotSpotNode.geometry = sphere
+         newHotSpotNode.position = position
+         geometryNode?.addChildNode(newHotSpotNode)
+     }
     
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
@@ -331,6 +369,24 @@ import ImageIO
                 }else{
                     print("You tapped on nothing")
                 }
+                
+                  isFlexSpace = false
+                
+                createGeometryNode()
+                
+              
+                
+                let something = pursuitGraph.floorPlan.filter { $0.name == "classroom2"}
+                
+                for i in something{
+                    for hotspot in i.hotspots{
+                        createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+                    }
+                }
+                
+//                for hotspot in pursuitGraph.hotspots {
+//                        createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+//                }
             }
         }
     }

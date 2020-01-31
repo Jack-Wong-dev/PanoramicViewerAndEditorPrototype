@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0A7849BC23E33B1000F62BFB /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849BB23E33B1000F62BFB /* Toast.swift */; };
-		0A7849EF23E3773100F62BFB /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849EE23E3773100F62BFB /* Room.swift */; };
 		0A7849F223E3B1BF00F62BFB /* Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849F123E3B1BF00F62BFB /* Archive.swift */; };
+		0A7849F423E4C10700F62BFB /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849F323E4C10700F62BFB /* Room.swift */; };
 		0AA6D0C723DF5453008122BB /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA6D0C623DF5453008122BB /* MainView.swift */; };
 		0AAC48BC23D75BE4003B47EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48BB23D75BE4003B47EA /* AppDelegate.swift */; };
 		0AAC48BE23D75BE4003B47EA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48BD23D75BE4003B47EA /* SceneDelegate.swift */; };
@@ -35,8 +35,8 @@
 
 /* Begin PBXFileReference section */
 		0A7849BB23E33B1000F62BFB /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
-		0A7849EE23E3773100F62BFB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		0A7849F123E3B1BF00F62BFB /* Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archive.swift; sourceTree = "<group>"; };
+		0A7849F323E4C10700F62BFB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		0AA6D0C623DF5453008122BB /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		0AAC48B823D75BE4003B47EA /* TestingCTPano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingCTPano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AAC48BB23D75BE4003B47EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -75,7 +75,6 @@
 		0A7849EB23E3770400F62BFB /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0A7849EE23E3773100F62BFB /* Room.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -146,6 +145,7 @@
 				0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */,
 				0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */,
 				0A7849BB23E33B1000F62BFB /* Toast.swift */,
+				0A7849F323E4C10700F62BFB /* Room.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -275,10 +275,10 @@
 				0AAC48DF23D75C8F003B47EA /* CTPanoramaView.swift in Sources */,
 				0AAC48E123D75DB5003B47EA /* CTPieSliceView.swift in Sources */,
 				0AAC48C023D75BE4003B47EA /* ViewController.swift in Sources */,
-				0A7849EF23E3773100F62BFB /* Room.swift in Sources */,
 				0AAC48BC23D75BE4003B47EA /* AppDelegate.swift in Sources */,
 				0AA6D0C723DF5453008122BB /* MainView.swift in Sources */,
 				0AAC48BE23D75BE4003B47EA /* SceneDelegate.swift in Sources */,
+				0A7849F423E4C10700F62BFB /* Room.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
