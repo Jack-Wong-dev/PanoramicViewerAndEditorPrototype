@@ -20,10 +20,10 @@
 //    case touch
 //}
 //
-////@objc public enum CTPanoramaType: Int {
-////    case cylindrical
-////    case spherical
-////}
+//@objc public enum CTPanoramaType: Int {
+//    case cylindrical
+//    case spherical
+//}
 //
 //@objc public class CTPanoramaView: UIView {
 //
@@ -40,11 +40,11 @@
 //    @objc public var panSpeed = CGPoint(x: 0.005, y: 0.005)
 //    @objc public var startAngle: Float = 0
 //
-////    @objc public var image: UIImage? {
-////        didSet {
-////            panoramaType = panoramaTypeForCurrentImage
-////        }
-////    }
+//    @objc public var image: UIImage? {
+//        didSet {
+//            panoramaType = panoramaTypeForCurrentImage
+//        }
+//    }
 //
 //    @objc public var overlayView: UIView? {
 //        didSet {
@@ -52,20 +52,20 @@
 //        }
 //    }
 //
-//    //    @objc public var panoramaType: CTPanoramaType = .cylindrical {
-//    //        didSet {
-//    //            createGeometryNode()
-//    //
-//    //            createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
-//    //
-//    //            createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
-//    //
-//    //            createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
-//    //
-//    //            resetCameraAngles()
-//    //        }
-//    //    }
-//    //
+//    @objc public var panoramaType: CTPanoramaType = .cylindrical {
+//        didSet {
+//            createGeometryNode()
+//
+//            createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+//
+//            createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+//
+//            createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+//
+//            resetCameraAngles()
+//        }
+//    }
+//
 //    @objc public var controlMethod: CTPanoramaControlMethod = .touch {
 //        didSet {
 //            switchControlMethod(to: controlMethod)
@@ -127,14 +127,14 @@
 //        }
 //    }
 //
-////    private var panoramaTypeForCurrentImage: CTPanoramaType {
-////        if let image = image {
-////            if image.size.width / image.size.height == 2 {
-////                return .spherical
-////            }
-////        }
-////        return .cylindrical
-////    }
+//    //    private var panoramaTypeForCurrentImage: CTPanoramaType {
+//    //        if let image = image {
+//    //            if image.size.width / image.size.height == 2 {
+//    //                return .spherical
+//    //            }
+//    //        }
+//    //        return .cylindrical
+//    //    }
 //
 //    // MARK: Class lifecycle methods
 //
@@ -151,7 +151,7 @@
 //    public convenience init(frame: CGRect, image: UIImage) {
 //        self.init(frame: frame)
 //        // Force Swift to call the property observer by calling the setter from a non-init context
-////        ({ self.image = image })()
+//        //        ({ self.image = image })()
 //    }
 //
 //    deinit {
@@ -190,10 +190,10 @@
 //    // MARK: Configuration helper methods
 //
 //    private func createGeometryNode() {
-////        guard let image = image else {return}
+//        //        guard let image = image else {return}
 //
 //        if geometryNode != nil{
-//             geometryNode?.removeFromParentNode()
+//            geometryNode?.removeFromParentNode()
 //        }
 //
 //        //Test Code
@@ -213,58 +213,58 @@
 //
 //        }
 //
-////        //Assign texture
-////        material.diffuse.contents = image
-////
-////        //Make Property contents smaller in size
-////        material.diffuse.mipFilter = .nearest
-////
-////        //Render property contents larger
-////        material.diffuse.magnificationFilter = .nearest
-////
-////        //(-1,1,1) means we're flipping horizantally
-////        material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
-////
-////        material.diffuse.wrapS = .repeat
-////
-////        //Not rendering the back surfaces, just the front
-////        material.cullMode = .front
+//        //        //Assign texture
+//        //        material.diffuse.contents = image
+//        //
+//        //        //Make Property contents smaller in size
+//        //        material.diffuse.mipFilter = .nearest
+//        //
+//        //        //Render property contents larger
+//        //        material.diffuse.magnificationFilter = .nearest
+//        //
+//        //        //(-1,1,1) means we're flipping horizantally
+//        //        material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
+//        //
+//        //        material.diffuse.wrapS = .repeat
+//        //
+//        //        //Not rendering the back surfaces, just the front
+//        //        material.cullMode = .front
 //
-////        if panoramaType == .spherical {
-//            let sphere = SCNSphere(radius: radius)
-//            sphere.segmentCount = 300
-//            //            sphere.firstMaterial = material
-//            sphere.materials = materials
-//            sphere.firstMaterial = sphere.materials[2]
+//        //        if panoramaType == .spherical {
+//        let sphere = SCNSphere(radius: radius)
+//        sphere.segmentCount = 300
+//        //            sphere.firstMaterial = material
+//        sphere.materials = materials
+//        sphere.firstMaterial = sphere.materials[2]
 //
 //
-//            let sphereNode = SCNNode()
-//            sphereNode.geometry = sphere
-////            geometryNode = sphereNode
-////        } else {
-////            let tube = SCNTube(innerRadius: radius, outerRadius: radius, height: fovHeight)
-////            tube.heightSegmentCount = 50
-////            tube.radialSegmentCount = 300
-////            tube.firstMaterial = material
-////
-////            let tubeNode = SCNNode()
-////            tubeNode.geometry = tube
-////            geometryNode = tubeNode
-////        }
+//        let sphereNode = SCNNode()
+//        sphereNode.geometry = sphere
+//        //            geometryNode = sphereNode
+//        //        } else {
+//        //            let tube = SCNTube(innerRadius: radius, outerRadius: radius, height: fovHeight)
+//        //            tube.heightSegmentCount = 50
+//        //            tube.radialSegmentCount = 300
+//        //            tube.firstMaterial = material
+//        //
+//        //            let tubeNode = SCNNode()
+//        //            tubeNode.geometry = tube
+//        //            geometryNode = tubeNode
+//        //        }
 //
 //        guard let photoSphereNode = geometryNode else {return}
 //        scene.rootNode.addChildNode(photoSphereNode)
 //    }
 //
 //    private func createHotSpotNode(name: String, position: SCNVector3){
-//            let sphere = SCNSphere(radius: 0.2)
-//            sphere.firstMaterial?.diffuse.contents = UIColor.green
+//        let sphere = SCNSphere(radius: 0.2)
+//        sphere.firstMaterial?.diffuse.contents = UIColor.green
 //
-//            let newHotSpotNode = SCNNode()
-//            newHotSpotNode.geometry = sphere
-//            newHotSpotNode.position = position
-//            newHotSpotNode.name = name
-//            geometryNode?.addChildNode(newHotSpotNode)
+//        let newHotSpotNode = SCNNode()
+//        newHotSpotNode.geometry = sphere
+//        newHotSpotNode.position = position
+//        newHotSpotNode.name = name
+//        geometryNode?.addChildNode(newHotSpotNode)
 //    }
 //
 //
@@ -308,16 +308,16 @@
 //                                                    var userHeading = .pi - atan2(rotationMatrix.m32, rotationMatrix.m31)
 //                                                    userHeading += .pi/2
 //
-////                                                    DispatchQueue.main.async {
-////                                                        if panoramaView.panoramaType == .cylindrical {
-////                                                            // Prevent vertical movement in a cylindrical panorama
-////                                                            panoramaView.cameraNode.eulerAngles = SCNVector3Make(0, panoramaView.startAngle + Float(-userHeading), 0)
-////                                                        } else {
-////                                                            // Use quaternions when in spherical mode to prevent gimbal lock
-////                                                            panoramaView.cameraNode.orientation = motionData.orientation()
-////                                                        }
-////                                                        panoramaView.reportMovement(CGFloat(userHeading), panoramaView.xFov.toRadians())
-////                                                    }
+//                                                    DispatchQueue.main.async {
+//                                                        if panoramaView.panoramaType == .cylindrical {
+//                                                            // Prevent vertical movement in a cylindrical panorama
+//                                                            panoramaView.cameraNode.eulerAngles = SCNVector3Make(0, panoramaView.startAngle + Float(-userHeading), 0)
+//                                                        } else {
+//                                                            // Use quaternions when in spherical mode to prevent gimbal lock
+//                                                            panoramaView.cameraNode.orientation = motionData.orientation()
+//                                                        }
+//                                                        panoramaView.reportMovement(CGFloat(userHeading), panoramaView.xFov.toRadians())
+//                                                    }
 //            })
 //        }
 //    }
@@ -342,9 +342,9 @@
 //        } else if panRec.state == .changed {
 //            var modifiedPanSpeed = panSpeed
 //
-////            if panoramaType == .cylindrical {
-////                modifiedPanSpeed.y = 0 // Prevent vertical movement in a cylindrical panorama
-////            }
+//            //            if panoramaType == .cylindrical {
+//            //                modifiedPanSpeed.y = 0 // Prevent vertical movement in a cylindrical panorama
+//            //            }
 //
 //            let location = panRec.translation(in: sceneView)
 //            let orientation = cameraNode.eulerAngles

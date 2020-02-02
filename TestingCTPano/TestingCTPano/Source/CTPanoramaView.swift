@@ -12,12 +12,6 @@ import CoreMotion
 import ImageIO
 
 
-struct info {
-    static let pursuitGraph = Graph()
-    static let flexSpace = pursuitGraph.addRoom(name: "flexSpace")
-    static let classroom2 = pursuitGraph.addRoom(name: "classroom2")
-}
-
 @objc public protocol CTPanoramaCompass {
     func updateUI(rotationAngle: CGFloat, fieldOfViewAngle: CGFloat)
 }
@@ -28,15 +22,9 @@ struct info {
 }
 
 @objc public class CTPanoramaView: UIView {
-    
-    let images = [UIImage(named: "pursuit"), UIImage(named: "spherical"), UIImage(named: "classroom2")]
-    
-//    let pursuitRoom = Room(imageURL: "pursuit", hotspots: [Hotspot(name: "Classroom 2", coordinates: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)),Hotspot(name: "TV", coordinates: SCNVector3Make(-2.0663686,-0.24952725,-9.780738)),Hotspot(name: "Hallway", coordinates: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))])
-//
-//    let classroom2 = Room(imageURL: "classroom2", hotspots: [Hotspot(name: "Flex Space", coordinates: SCNVector3(x: 1.0204816, y: -0.6144954, z: 9.92852))])
-    
-    
+        
     // MARK: Public properties
+//    public var pursuitGraph = Graph()
     
     @objc public var compass: CTPanoramaCompass?
     @objc public var movementHandler: ((_ rotationAngle: CGFloat, _ fieldOfViewAngle: CGFloat) -> Void)?
@@ -58,7 +46,8 @@ struct info {
     }
     
     // MARK: Private properties
-    
+    private var pursuitGraph = Graph()
+
     private let radius: CGFloat = 10
     public let sceneView = SCNView()
     private let scene = SCNScene()
@@ -66,13 +55,6 @@ struct info {
     private var geometryNode: SCNNode?
     private var prevLocation = CGPoint.zero
     private var prevBounds = CGRect.zero
-    
-    private var pursuitGraph = Graph()
-    private var isFlexSpace = true
-    
-    
-    //hotspot
-    private var hotSpotNode: SCNNode?
     
     private lazy var cameraNode: SCNNode = {
         let node = SCNNode()
@@ -141,14 +123,8 @@ struct info {
     
     private func commonInit() {
         
-        let flexSpace = pursuitGraph.addRoom(name: "flexSpace")
-        let classroom2 = pursuitGraph.addRoom(name: "classroom2")
-        let hallway = pursuitGraph.addRoom(name: "hallway")
-        
-        
-//        SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294)
-        pursuitGraph.addHotspot(source: flexSpace, neighbor: classroom2, coordinates: (-9.892502, -0.8068286, -1.216294))
-        
+        pursuitGraph =  GraphData.manager.populateGraph()
+            
         add(view: sceneView)
         
         scene.rootNode.addChildNode(cameraNode)
@@ -159,17 +135,24 @@ struct info {
         
         switchControlMethod(to: controlMethod)
         
-        //This should ideally not be here
-        createGeometryNode()
+        guard let firstRoom = pursuitGraph.floorPlan.first else { return }
         
-        for hotspot in flexSpace.hotspots {
-            createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+        //This should ideally not be here
+        createGeometryNode(imageURL: firstRoom.imageURL)
+        
+        for hotspot in firstRoom.hotspots {
+            
+            if let name = hotspot.neighbor.name{
+                
+                createHotSpotNode(name: name, position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+            }
+            
         }
-//        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
-//
-//        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
-//
-//        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
+        //        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
+        //
+        //        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
+        //
+        //        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
         //end
         
     }
@@ -178,72 +161,47 @@ struct info {
     
     // MARK: Configuration helper methods
     
-    private func createGeometryNode() {
+    private func createGeometryNode(imageURL: String?) {
+        
+        guard let image = imageURL else { return }
         
         if geometryNode != nil{
             geometryNode?.removeFromParentNode()
         }
         
-        var materials = [SCNMaterial]()
-        for someImage in images{
-            
-            let someMaterial = SCNMaterial()
-            
-            someMaterial.diffuse.contents = someImage
-            someMaterial.diffuse.mipFilter = .nearest
-            someMaterial.diffuse.magnificationFilter = .nearest
-            someMaterial.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
-            someMaterial.diffuse.wrapS = .repeat
-            someMaterial.cullMode = .front
-            
-            materials.append(someMaterial)
-            
-        }
+        let material = SCNMaterial()
+        material.diffuse.contents = UIImage(named: image)
+        material.diffuse.mipFilter = .nearest
+        material.diffuse.magnificationFilter = .nearest
+        material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
+        material.diffuse.wrapS = .repeat
+        material.cullMode = .front
         
         let sphere = SCNSphere(radius: radius)
         sphere.segmentCount = 300
-        //            sphere.firstMaterial = material
         
-        sphere.materials = materials
-        
-        if isFlexSpace{
-            sphere.firstMaterial = sphere.materials[0]
-        }else{
-            sphere.firstMaterial = sphere.materials[2]
-        }
-        
+        sphere.firstMaterial = material
         
         let sphereNode = SCNNode()
         sphereNode.geometry = sphere
         geometryNode = sphereNode
-
+        
         
         guard let photoSphereNode = geometryNode else {return}
         scene.rootNode.addChildNode(photoSphereNode)
         resetCameraAngles()
     }
     
-//    private func createHotSpotNode(name: String, position: SCNVector3){
-//        let sphere = SCNSphere(radius: 0.2)
-//        sphere.firstMaterial?.diffuse.contents = UIColor.green
-//
-//        let newHotSpotNode = SCNNode()
-//        newHotSpotNode.geometry = sphere
-//        newHotSpotNode.position = position
-//        newHotSpotNode.name = name
-//        geometryNode?.addChildNode(newHotSpotNode)
-//    }
-    
-    private func createHotSpotNode(position: SCNVector3){
-         let sphere = SCNSphere(radius: 0.2)
-         sphere.firstMaterial?.diffuse.contents = UIColor.green
-         
-         let newHotSpotNode = SCNNode()
-         newHotSpotNode.geometry = sphere
-         newHotSpotNode.position = position
-         geometryNode?.addChildNode(newHotSpotNode)
-     }
-    
+    private func createHotSpotNode(name: String, position: SCNVector3){
+        let sphere = SCNSphere(radius: 0.3)
+        sphere.firstMaterial?.diffuse.contents = UIColor.green
+        
+        let newHotSpotNode = SCNNode()
+        newHotSpotNode.geometry = sphere
+        newHotSpotNode.position = position
+        newHotSpotNode.name = name
+        geometryNode?.addChildNode(newHotSpotNode)
+    }
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
         overlayView?.removeFromSuperview()
@@ -285,10 +243,16 @@ struct info {
                                                     var userHeading = .pi - atan2(rotationMatrix.m32, rotationMatrix.m31)
                                                     userHeading += .pi/2
                                                     
+                                                    DispatchQueue.main.async {
+                                                            // Use quaternions when in spherical mode to prevent gimbal lock
+                                                            panoramaView.cameraNode.orientation = motionData.orientation()
 
+                                                        panoramaView.reportMovement(CGFloat(userHeading), panoramaView.xFov.toRadians())
+                                                    }
             })
         }
     }
+    
     
     private func resetCameraAngles() {
         cameraNode.eulerAngles = SCNVector3Make(0, startAngle, 0)
@@ -308,7 +272,8 @@ struct info {
         if panRec.state == .began {
             prevLocation = CGPoint.zero
         } else if panRec.state == .changed {
-            var modifiedPanSpeed = panSpeed
+            //            var modifiedPanSpeed = panSpeed
+            let modifiedPanSpeed = panSpeed
             
             let location = panRec.translation(in: sceneView)
             let orientation = cameraNode.eulerAngles
@@ -356,37 +321,33 @@ struct info {
             let touchLocation = gestureRecognize.location(in: scnView)
             let hitResults = scnView.hitTest(touchLocation, options: nil)
             //MARK:- Show tapped coordinates
-                        if hitResults.count > 0 {
-                            // retrieved the first clicked object
-                            let result: SCNHitTestResult = hitResults[0]
-                            let vect:SCNVector3 = result.localCoordinates
-                            print(vect)
-                        }
+            if hitResults.count > 0 {
+                // retrieved the first clicked object
+                let result: SCNHitTestResult = hitResults[0]
+                let vect:SCNVector3 = result.localCoordinates
+                print(vect)
+            }
             if let result = hitResults.first {
-                if let nodeName = result.node.name{
                 
-                    self.makeToast("You tapped on \(nodeName)")
-                }else{
+                guard let nodeName = result.node.name else {
                     print("You tapped on nothing")
+                    return
                 }
                 
-                  isFlexSpace = false
+                self.makeToast("You entered \(nodeName)")
                 
-                createGeometryNode()
-                
-              
-                
-                let something = pursuitGraph.floorPlan.filter { $0.name == "classroom2"}
+                let something = pursuitGraph.floorPlan.filter { $0.name == nodeName}
                 
                 for i in something{
+                    
+                    createGeometryNode(imageURL: i.imageURL)
+                    
                     for hotspot in i.hotspots{
-                        createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+                        if let name = hotspot.neighbor.name{
+                            createHotSpotNode(name: name, position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
+                        }
                     }
                 }
-                
-//                for hotspot in pursuitGraph.hotspots {
-//                        createHotSpotNode(position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
-//                }
             }
         }
     }
