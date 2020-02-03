@@ -148,13 +148,6 @@ import ImageIO
             }
             
         }
-        //        createHotSpotNode(name: "TV", position: SCNVector3Make(-2.0663686,-0.24952725,-9.780738))
-        //
-        //        createHotSpotNode(name: "Classroom 2", position: SCNVector3(x: -9.892502, y: -0.8068286, z: -1.216294))
-        //
-        //        createHotSpotNode(name: "Hallway", position: SCNVector3(x: -4.286848, y: -0.42364424, z: 9.024227))
-        //end
-        
     }
     
     
@@ -227,6 +220,10 @@ import ImageIO
             }
         } else {
             guard motionManager.isDeviceMotionAvailable else {return}
+            
+            //Resetting the field of view
+            yFov = 80
+            
             motionManager.deviceMotionUpdateInterval = 0.015
             motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: opQueue,
                                                    withHandler: { [weak self] (motionData, error) in
@@ -255,7 +252,7 @@ import ImageIO
     
     
     private func resetCameraAngles() {
-        cameraNode.eulerAngles = SCNVector3Make(0, startAngle, 0)
+        cameraNode.eulerAngles = SCNVector3Make(0, 135, 0)
         self.reportMovement(CGFloat(startAngle), xFov.toRadians(), callHandler: false)
     }
     
@@ -310,7 +307,7 @@ import ImageIO
             break
         }
     }
-    
+    //MARK:-- Tap Method.  If a hotspot node is tapped the next room should appear
     @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
         if gestureRecognize.state == .ended{
@@ -338,6 +335,10 @@ import ImageIO
                 
                 let something = pursuitGraph.floorPlan.filter { $0.name == nodeName}
                 
+                //Resetting the field of view
+                yFov = 80
+                
+                //Creating all the selected room's hotspots
                 for i in something{
                     
                     createGeometryNode(imageURL: i.imageURL)
