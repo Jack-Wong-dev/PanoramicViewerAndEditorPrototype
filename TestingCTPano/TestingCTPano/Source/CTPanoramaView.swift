@@ -22,9 +22,12 @@ import ImageIO
 }
 
 @objc public class CTPanoramaView: UIView {
-        
+    
+    var imageDictionary = [String: UIImage]()
+    
+    
     // MARK: Public properties
-//    public var pursuitGraph = Graph()
+    //    public var pursuitGraph = Graph()
     
     @objc public var compass: CTPanoramaCompass?
     @objc public var movementHandler: ((_ rotationAngle: CGFloat, _ fieldOfViewAngle: CGFloat) -> Void)?
@@ -47,7 +50,7 @@ import ImageIO
     
     // MARK: Private properties
     private var pursuitGraph = Graph()
-
+    
     private let radius: CGFloat = 10
     public let sceneView = SCNView()
     private let scene = SCNScene()
@@ -124,7 +127,17 @@ import ImageIO
     private func commonInit() {
         
         pursuitGraph =  GraphData.manager.populateGraph()
+        
+        for room in pursuitGraph.floorPlan{
+            guard let image = room.imageURL else {continue}
             
+            if var newRoom = UIImage(named: image){
+                newRoom = newRoom.resize(image: newRoom)
+                imageDictionary[image] = newRoom
+            }
+        }
+        
+        
         add(view: sceneView)
         
         scene.rootNode.addChildNode(cameraNode)
@@ -137,7 +150,7 @@ import ImageIO
         
         guard let firstRoom = pursuitGraph.floorPlan.first else { return }
         
-        //This should ideally not be here
+        //Creating the node based on the first element of the floorplan
         createGeometryNode(imageURL: firstRoom.imageURL)
         
         for hotspot in firstRoom.hotspots {
@@ -150,20 +163,54 @@ import ImageIO
         }
     }
     
-    
-    
     // MARK: Configuration helper methods
+    
+//    private func createGeometryNode(imageURL: String?) {
+//
+//        guard let image = imageURL else { return }
+//
+//        guard let selectedImage = UIImage(named: image) else {return}
+//
+//        if geometryNode != nil{
+//            geometryNode?.removeFromParentNode()
+//        }
+//
+//        let material = SCNMaterial()
+//        material.diffuse.contents = selectedImage.resize(image: selectedImage)
+//        material.diffuse.mipFilter = .nearest
+//        material.diffuse.magnificationFilter = .nearest
+//        material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
+//        material.diffuse.wrapS = .repeat
+//        material.cullMode = .front
+//
+//        let sphere = SCNSphere(radius: radius)
+//        sphere.segmentCount = 300
+//
+//        sphere.firstMaterial = material
+//
+//        let sphereNode = SCNNode()
+//        sphereNode.geometry = sphere
+//
+//        //Rotating the sphere 180 degrees so that the camera node will face the the center of the photosphere.
+//        sphereNode.rotation = SCNVector4Make(0, 1, 0, Float(180).toRadians())
+//        geometryNode = sphereNode
+//
+//        guard let photoSphereNode = geometryNode else {return}
+//        scene.rootNode.addChildNode(photoSphereNode)
+//        resetCameraAngles()
+//    }
     
     private func createGeometryNode(imageURL: String?) {
         
         guard let image = imageURL else { return }
-        
+                
         if geometryNode != nil{
             geometryNode?.removeFromParentNode()
         }
         
         let material = SCNMaterial()
-        material.diffuse.contents = UIImage(named: image)
+        material.diffuse.contents = imageDictionary[image]!
+//        material.diffuse.contents = selectedImage.resize(image: selectedImage)
         material.diffuse.mipFilter = .nearest
         material.diffuse.magnificationFilter = .nearest
         material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
@@ -177,8 +224,10 @@ import ImageIO
         
         let sphereNode = SCNNode()
         sphereNode.geometry = sphere
-        geometryNode = sphereNode
         
+        //Rotating the sphere 180 degrees so that the camera node will face the the center of the photosphere.
+        sphereNode.rotation = SCNVector4Make(0, 1, 0, Float(180).toRadians())
+        geometryNode = sphereNode
         
         guard let photoSphereNode = geometryNode else {return}
         scene.rootNode.addChildNode(photoSphereNode)
@@ -186,14 +235,23 @@ import ImageIO
     }
     
     private func createHotSpotNode(name: String, position: SCNVector3){
-        let sphere = SCNSphere(radius: 0.3)
-        sphere.firstMaterial?.diffuse.contents = UIColor.green
-        
+        let sphere = SCNSphere(radius: 0.5)
+        sphere.firstMaterial = SCNMaterial(color: .clear)
         let newHotSpotNode = SCNNode()
         newHotSpotNode.geometry = sphere
         newHotSpotNode.position = position
         newHotSpotNode.name = name
+
+        let colorSphere = SCNSphere(radius: 0.2)
+        colorSphere.firstMaterial?.diffuse.contents = UIColor.green
+
+        let colorNode = SCNNode()
+        colorNode.geometry = colorSphere
+        colorNode.position = position
+        colorNode.name = name
+        
         geometryNode?.addChildNode(newHotSpotNode)
+        geometryNode?.addChildNode(colorNode)
     }
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
@@ -241,9 +299,9 @@ import ImageIO
                                                     userHeading += .pi/2
                                                     
                                                     DispatchQueue.main.async {
-                                                            // Use quaternions when in spherical mode to prevent gimbal lock
-                                                            panoramaView.cameraNode.orientation = motionData.orientation()
-
+                                                        // Use quaternions when in spherical mode to prevent gimbal lock
+                                                        panoramaView.cameraNode.orientation = motionData.orientation()
+                                                        
                                                         panoramaView.reportMovement(CGFloat(userHeading), panoramaView.xFov.toRadians())
                                                     }
             })
@@ -252,7 +310,7 @@ import ImageIO
     
     
     private func resetCameraAngles() {
-        cameraNode.eulerAngles = SCNVector3Make(0, 135, 0)
+        cameraNode.eulerAngles = SCNVector3Make(0, startAngle, 0)
         self.reportMovement(CGFloat(startAngle), xFov.toRadians(), callHandler: false)
     }
     

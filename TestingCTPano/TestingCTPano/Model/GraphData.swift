@@ -21,7 +21,7 @@ class GraphData{
         
         let classroom2 = newGraph.addRoom(name: "classroom2", imageURL: "classroom2")
         
-        let television = newGraph.addRoom(name: "tv", imageURL: "bioshockinfinite")
+        let television = newGraph.addRoom(name: "tv", imageURL: "gtav")
         
         //Creating Hotspots
         newGraph.addHotspot(source: flexSpace, destination: classroom2, coordinates: (-9.892502, -0.8068286, -1.216294))
@@ -32,6 +32,13 @@ class GraphData{
         
         newGraph.addHotspot(source: flexSpace, destination: television, coordinates: (-2.0663686, -0.24952725, -9.780738))
         
+         if let lastHotSpot = television.hotspots.last{
+                lastHotSpot.coordinates = (4.5396996, 0.098314874,  -8.908977)
+        }
+        
         return newGraph
     }
 }
+
+//Bioshock Infinite
+//SCNVector3(x: 4.5396996, y: 0.098314874, z: -8.908977)

@@ -21,7 +21,6 @@ public class Hotspot {
     
 }
 
-
 public class Graph {
     var floorPlan: [Room]
     
@@ -47,29 +46,4 @@ public class Graph {
         reverseHotspot.neighbor = source
         destination.hotspots.append(reverseHotspot)
     }
-    
-    
 }
-
-struct something {
-    var someGraph = Graph()
-}
-//
-//
-//let pursuitGraph = Graph()
-//let classroom = pursuitGraph.addRoom(name: "classroom2")
-//let bathroom = pursuitGraph.addRoom(name: "bathroom")
-//
-//pursuitGraph.addHotspot(source: classroom, neighbor: bathroom, coordinates: (420, 69, 33))
-//
-//var hotSpotCount = 0
-//
-//for i in pursuitGraph.floorPlan{
-//    for j in i.hotspots{
-//        print(j.coordinates)
-//        hotSpotCount += 1
-//    }
-//}
-//
-////print(hotSpotCount)
-
