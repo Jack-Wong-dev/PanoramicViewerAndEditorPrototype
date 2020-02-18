@@ -1,34 +1,16 @@
-//
-//  CTPanoramaView.swift
-//  TestingCTPano
-//
-//  Created by Jack Wong on 1/21/20.
-//  Copyright © 2020 Jack Wong. All rights reserved.
-//
-
 import UIKit
 import SceneKit
 import CoreMotion
 import ImageIO
 
-@objc public enum HUD: Int {
-    case show
-    case hide
+@objc public enum TapSelection: Int {
+    case selectPosition
+    case nodeSelection
 }
 
-@objc public protocol CTPanoramaCompass {
-    func updateUI(rotationAngle: CGFloat, fieldOfViewAngle: CGFloat)
-}
-
-@objc public enum CTPanoramaControlMethod: Int {
-    case motion
-    case touch
-}
-
-@objc public class CTPanoramaView: UIView {
+@objc public class EditorView: UIView {
     
     var imageDictionary = [String: UIImage]()
-    
     
     // MARK: Public properties
     //    public var pursuitGraph = Graph()
@@ -52,21 +34,28 @@ import ImageIO
         }
     }
     
-    @objc public var hudToggle: HUD = .hide {
+    @objc public var hudToggle: HUD = .show {
         didSet {
             toggleHUD(to: hudToggle)
         }
     }
     
     
+    @objc public var tapToggle: TapSelection = .nodeSelection {
+        didSet {
+            toggleHUD(to: hudToggle)
+        }
+    }
+    
     // MARK: Private properties
-    var pursuitGraph = Graph()
+    private var pursuitGraph = Graph()
+    private var editNode : SCNNode?
     
     private let radius: CGFloat = 10
     public let sceneView = SCNView()
     private let scene = SCNScene()
     private let motionManager = CMMotionManager()
-    private var roomNode: SCNNode?
+    private var geometryNode: SCNNode?
     private var prevLocation = CGPoint.zero
     private var prevBounds = CGRect.zero
     
@@ -135,10 +124,8 @@ import ImageIO
         }
     }
     
-    //MARK:-- Common Init
-    func commonInit() {
+    private func commonInit() {
         
-        print("starting common")
         pursuitGraph =  GraphData.manager.populateGraph()
         
         //Fetching the first room and image
@@ -173,21 +160,18 @@ import ImageIO
             }
         }
         
-        print("Done w/ floorplan")
-        
         add(view: sceneView)
         
         scene.rootNode.addChildNode(cameraNode)
         yFov = 80
         resetCameraAngles()
         sceneView.scene = scene
-        sceneView.backgroundColor = UIColor.green
+        sceneView.backgroundColor = UIColor.black
         
         switchControlMethod(to: controlMethod)
         
         //Creating the node based on the first element of the floorplan
-        
-        createRoomNode(room: firstRoom)
+        createGeometryNode(room: firstRoom)
         
         for (_, hotspot) in firstRoom.hotspots {
             if let name = hotspot.destination.name {
@@ -195,10 +179,9 @@ import ImageIO
             }
         }
     }
-    
     // MARK: Configuration helper methods
     
-    private func createRoomNode(room: Room) {
+    private func createGeometryNode(room: Room) {
         
         guard let imageURL = room.imageURL else { return }
         
@@ -209,8 +192,8 @@ import ImageIO
             }
         }
         
-        if roomNode != nil{
-            roomNode?.removeFromParentNode()
+        if geometryNode != nil{
+            geometryNode?.removeFromParentNode()
         }
         
         let sphere = SCNSphere(radius: radius)
@@ -219,7 +202,8 @@ import ImageIO
         let material = SCNMaterial()
         
         DispatchQueue.main.async {
-            material.diffuse.contents = self.imageDictionary[imageURL]
+            material.diffuse.contents = self.imageDictionary[imageURL]!
+            //        material.diffuse.contents = selectedImage.resize(image: selectedImage)
             material.diffuse.mipFilter = .nearest
             material.diffuse.magnificationFilter = .nearest
             material.diffuse.contentsTransform = SCNMatrix4MakeScale(-1, 1, 1)
@@ -236,11 +220,11 @@ import ImageIO
         //Rotating the sphere 180 degrees so that the camera node will face the the center of the photosphere.
         sphereNode.rotation = SCNVector4Make(0, 1, 0, Float(180).toRadians())
         
-        roomNode = sphereNode
+        geometryNode = sphereNode
         
         //        guard let photoSphereNode = geometryNode else {return}
         //        scene.rootNode.addChildNode(photoSphereNode)
-        scene.rootNode.addChildNode(roomNode!)
+        scene.rootNode.addChildNode(geometryNode!)
         resetCameraAngles()
     }
     
@@ -273,8 +257,8 @@ import ImageIO
         let moveLoop = SCNAction.repeatForever(moveSequence)
         colorNode.runAction(moveLoop)
         
-        roomNode?.addChildNode(newHotSpotNode)
-        roomNode?.addChildNode(colorNode)
+        geometryNode?.addChildNode(newHotSpotNode)
+        geometryNode?.addChildNode(colorNode)
     }
     
     private func enterRoom(selectedNode: SCNNode){
@@ -287,13 +271,19 @@ import ImageIO
         //Resetting the field of view
         yFov = 80
         
-        createRoomNode(room: destinationRoom)
+        //        createGeometryNode(imageURL: destinationRoom.imageURL)
+        createGeometryNode(room: destinationRoom)
         
         for (_, hotspot) in destinationRoom.hotspots{
             if let name = hotspot.destination.name {
                 createHotSpotNode(name: name, position: SCNVector3Make(hotspot.coordinates.0, hotspot.coordinates.1, hotspot.coordinates.2))
             }
         }
+    }
+    
+    //MARK:- User creating Destination Hotspot
+    private func createNewHotspot(){
+        
     }
     
     private func replace(overlayView: UIView?, with newOverlayView: UIView?) {
@@ -376,6 +366,7 @@ import ImageIO
     
     // MARK: Gesture handling
     
+    //MARK:-- Pan Gesture
     @objc private func handlePan(panRec: UIPanGestureRecognizer) {
         if panRec.state == .began {
             prevLocation = CGPoint.zero
@@ -400,6 +391,7 @@ import ImageIO
         }
     }
     
+    //MARK:-- Pinch Gesture
     @objc func handlePinch(pinchRec: UIPinchGestureRecognizer) {
         if pinchRec.numberOfTouches != 2 {
             return
@@ -418,42 +410,111 @@ import ImageIO
             break
         }
     }
-    //MARK:-- Tap Method.  If a hotspot node is tapped the next room should appear
+    //MARK:-- Tap Gesture
     @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
         if gestureRecognize.state == .ended{
             
             let scnView = sceneView
             
-            //MARK:- Check what nodes are tapped
+            //Check what nodes are tapped
             let touchLocation = gestureRecognize.location(in: scnView)
             let hitResults = scnView.hitTest(touchLocation, options: nil)
-            //MARK:- Show tapped coordinates
+            //Show tapped coordinates
+            
+            var newVector = SCNVector3Make(0, 0, 0)
+            
             if hitResults.count > 0 {
                 // retrieved the first clicked object
                 let result: SCNHitTestResult = hitResults[0]
-                let vect:SCNVector3 = result.localCoordinates
+                let vect: SCNVector3 = result.localCoordinates
                 print(vect)
+                newVector = vect
+                print("new vector is: \(newVector)")
             }
             if let result = hitResults.first {
                 
-                guard result.node.parent != scene.rootNode else {
-                    print("You tapped on nothing")
+                switch tapToggle {
                     
-                    //toggle the HUD
-                    if hudToggle == .hide {
-                        hudToggle = .show
-                    }else{
-                        hudToggle = .hide
+                case .nodeSelection:
+                    print("Selecting Node...")
+                    guard result.node.parent != scene.rootNode else {
+                        print("You tapped on nothing")
+                        return }
+                    
+                    displayActionSheet(result.node)
+                    
+                case .selectPosition:
+                    print("Selecting Position....")
+                    
+                    guard result.node.parent == scene.rootNode else {
+                        
+                        self.makeToast("You selected near an existing hotspot, try again!", point: CGPoint(x: self.bounds.width/2, y: self.bounds.height/8), title: "Derp!", image: UIImage(named: "derpface"), completion: nil)
+                        
+                        return }
+                    
+                    if let nodeToEdit = editNode{
+                        print("Safely unwrapped node to edit")
+                        getNewCoordinates(selectedNode: nodeToEdit, newVector: newVector)
                     }
-                    return
                 }
-                
-                enterRoom(selectedNode: result.node)
             }
         }
     }
     
+    private func getNewCoordinates(selectedNode: SCNNode, newVector: SCNVector3){
+        
+        let previousCoordinates = selectedNode.position
+        
+        geometryNode?.childNodes.filter{$0.name == selectedNode.name}.forEach({ $0.position = newVector
+        })
+        
+        let alertController = UIAlertController(title: "Confirm New Location", message: "What would you like to do?", preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "Yes", style: .default) { (action) in
+            //TODO: dismiss the prompt
+            
+            let room = self.pursuitGraph.getRoom(name: self.geometryNode!.name!)
+            let hotspot = room?.getHotspot(destinationName: selectedNode.name!)
+            hotspot?.coordinates = (selectedNode.position.x,selectedNode.position.y,selectedNode.position.z)
+            
+            self.tapToggle = .nodeSelection
+            
+            //            self.toolbar?.items?[1].isEnabled = false
+            self.toolbar?.items?[0].tintColor = .clear
+            
+            self.hideToast()
+            
+            self.makeToast(nil, point: CGPoint(x: self.bounds.width/2, y: self.bounds.height/1.5), title: nil, image: UIImage(named: "happyface"), completion: nil)
+            self.makeToast("Success!")
+        }
+        
+        
+        let cancelAction = UIAlertAction(title: "No", style: .default) { (action) in
+            
+            self.makeToast("Tap where you would like to place the hotspot", point: CGPoint(x: self.bounds.width/2, y: self.bounds.height/8), title: "Tap Location", image: UIImage(named: "funnyface"), completion: nil)
+            
+            self.geometryNode?.childNodes.filter{$0.name == selectedNode.name}.forEach({ $0.position = previousCoordinates
+            })
+        }
+        
+        alertController.addAction(okayAction)
+        alertController.addAction(cancelAction)
+        
+        var rootViewController = UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController
+        
+        if let navigationController = rootViewController as? UINavigationController {
+            rootViewController = navigationController.viewControllers.first
+        }
+        if let tabBarController = rootViewController as? UITabBarController {
+            rootViewController = tabBarController.selectedViewController
+        }
+        alertController.popoverPresentationController?.sourceView = self
+        //...
+        hideToast()
+        rootViewController?.present(alertController, animated: true, completion: nil)
+        
+    }
     
     public override func layoutSubviews() {
         super.layoutSubviews()
@@ -552,3 +613,63 @@ private extension GLKQuaternion {
         }
     }
 }
+
+extension EditorView{
+    
+    private func displayActionSheet(_ selectedNode: SCNNode){
+        
+        let alertController = UIAlertController(title: "\(selectedNode.name!)", message: "What would you like to do?", preferredStyle: .alert)
+        
+        let enterAction = UIAlertAction(title: "Enter", style: .default) {
+            (action) in
+            self.enterRoom(selectedNode: selectedNode)
+        }
+        
+        //MARK: -- Reposition HotSpot
+        let repositionAction = UIAlertAction(title: "Move Position", style: .default) { (action ) in
+            
+            self.makeToast("Tap where you would like to place the hotspot", point: CGPoint(x: self.bounds.width/2, y: self.bounds.height/8), title: "Tap Location", image: UIImage(named: "funnyface"), completion: nil)
+            self.tapToggle = .selectPosition
+            self.editNode = selectedNode
+            
+            self.toolbar?.items?[0].isEnabled = true
+            self.toolbar?.items?[0].tintColor = .white
+        }
+        
+        //MARK: -- Delete HotSpot
+               let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { (action) in
+                   
+                   //Update the changes to our graph
+                   guard let destinationName = selectedNode.name, let sourceName = self.geometryNode?.name else { return }
+                   
+                   guard  let sourceRoom = self.pursuitGraph.getRoom(name: sourceName), let destinationRoom = self.pursuitGraph.getRoom(name: destinationName) else { return }
+                   
+                   self.pursuitGraph.deleteHotSpot(source: sourceRoom, destination: destinationRoom)
+                   
+                   //Remove all child nodes with said name (This is because we created two identical hotspot nodes, but one is larger but invisible to increase touch area)
+                   self.geometryNode?.childNodes.filter{$0.name == selectedNode.name}.forEach({ $0.removeFromParentNode()
+                   })
+               }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alertController.addAction(enterAction)
+        alertController.addAction(repositionAction)
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
+        //...
+        var rootViewController = UIApplication.shared.windows.first{ $0.isKeyWindow }?.rootViewController
+        
+        if let navigationController = rootViewController as? UINavigationController {
+            rootViewController = navigationController.viewControllers.first
+        }
+        if let tabBarController = rootViewController as? UITabBarController {
+            rootViewController = tabBarController.selectedViewController
+        }
+        alertController.popoverPresentationController?.sourceView = self
+        //...
+        rootViewController?.present(alertController, animated: true, completion: nil)
+    }
+    
+}
+

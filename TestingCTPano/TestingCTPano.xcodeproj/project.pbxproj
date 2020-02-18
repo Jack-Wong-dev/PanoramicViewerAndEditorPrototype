@@ -22,6 +22,8 @@
 		0AAC48DF23D75C8F003B47EA /* CTPanoramaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */; };
 		0AAC48E123D75DB5003B47EA /* CTPieSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */; };
 		0AC16A3423DF8B6000C58623 /* PanoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC16A3323DF8B6000C58623 /* PanoViewController.swift */; };
+		0AF4ECE223EE08ED00A73DDF /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4ECE123EE08EC00A73DDF /* EditorView.swift */; };
+		0AF4ECE423F20A0200A73DDF /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4ECE323F20A0200A73DDF /* Graph.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTPanoramaView.swift; sourceTree = "<group>"; };
 		0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTPieSliceView.swift; sourceTree = "<group>"; };
 		0AC16A3323DF8B6000C58623 /* PanoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoViewController.swift; sourceTree = "<group>"; };
+		0AF4ECE123EE08EC00A73DDF /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		0AF4ECE323F20A0200A73DDF /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +83,7 @@
 			children = (
 				0A7849F323E4C10700F62BFB /* Room.swift */,
 				0A0D986C23E5FF2A00DBBF36 /* GraphData.swift */,
+				0AF4ECE323F20A0200A73DDF /* Graph.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -150,6 +155,7 @@
 				0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */,
 				0A7849BB23E33B1000F62BFB /* Toast.swift */,
 				0A0D987223EA0D3D00DBBF36 /* extensions.swift */,
+				0AF4ECE123EE08EC00A73DDF /* EditorView.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -273,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A7849F223E3B1BF00F62BFB /* Archive.swift in Sources */,
+				0AF4ECE423F20A0200A73DDF /* Graph.swift in Sources */,
 				0AC16A3423DF8B6000C58623 /* PanoViewController.swift in Sources */,
 				0A7849BC23E33B1000F62BFB /* Toast.swift in Sources */,
 				0A0D987323EA0D3D00DBBF36 /* extensions.swift in Sources */,
@@ -282,6 +289,7 @@
 				0A0D986D23E5FF2A00DBBF36 /* GraphData.swift in Sources */,
 				0AAC48BC23D75BE4003B47EA /* AppDelegate.swift in Sources */,
 				0AAC48BE23D75BE4003B47EA /* SceneDelegate.swift in Sources */,
+				0AF4ECE223EE08ED00A73DDF /* EditorView.swift in Sources */,
 				0A7849F423E4C10700F62BFB /* Room.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
