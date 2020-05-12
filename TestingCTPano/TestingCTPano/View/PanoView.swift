@@ -1,7 +1,3 @@
-//
-//  CTPanoramaView.swift
-//  TestingCTPano
-//
 //  Created by Jack Wong on 1/21/20.
 //  Copyright © 2020 Jack Wong. All rights reserved.
 //
@@ -23,9 +19,10 @@ import ImageIO
 @objc public enum CTPanoramaControlMethod: Int {
     case motion
     case touch
+    case rotate
 }
 
-@objc public class CTPanoramaView: UIView {
+@objc public class PanoView: UIView {
     
     var imageDictionary = [String: UIImage]()
     
@@ -63,7 +60,12 @@ import ImageIO
     var pursuitGraph = Graph()
     
     private let radius: CGFloat = 10
-    public let sceneView = SCNView()
+    
+    public lazy var sceneView : SCNView = {
+        let scnView = SCNView()
+        return scnView
+    }()
+    
     private let scene = SCNScene()
     private let motionManager = CMMotionManager()
     private var roomNode: SCNNode?
@@ -181,7 +183,6 @@ import ImageIO
         yFov = 80
         resetCameraAngles()
         sceneView.scene = scene
-        sceneView.backgroundColor = UIColor.green
         
         switchControlMethod(to: controlMethod)
         
@@ -244,6 +245,17 @@ import ImageIO
         resetCameraAngles()
     }
     
+    /// Creates An Array Of CIBloom Filters
+    ///
+    /// - Returns: [CIFilter]?
+    func addBloom() -> [CIFilter]? {
+        let bloomFilter = CIFilter(name:"CIBloom")!
+        bloomFilter.setValue(5.0, forKey: "inputIntensity")
+        bloomFilter.setValue(10.0, forKey: "inputRadius")
+
+        return [bloomFilter]
+    }
+    
     private func createHotSpotNode(name: String, position: SCNVector3){
         
         //Create invisible node to increase touch area
@@ -257,21 +269,16 @@ import ImageIO
         
         //Create the node the user will actually see to tap
         let colorSphere = SCNSphere(radius: 0.2)
-        colorSphere.firstMaterial?.diffuse.contents = UIColor.green
+
+        colorSphere.firstMaterial?.diffuse.contents = UIColor.systemGreen
         
         let colorNode = SCNNode()
         colorNode.geometry = colorSphere
         colorNode.position = position
         colorNode.name = name
-        
-        //Animate the color node to hover
-        let moveUp = SCNAction.moveBy(x: 0, y: 0.05, z: 0, duration: 1)
-        moveUp.timingMode = .easeInEaseOut;
-        let moveDown = SCNAction.moveBy(x: 0, y: -0.05, z: 0, duration: 1)
-        moveDown.timingMode = .easeInEaseOut;
-        let moveSequence = SCNAction.sequence([moveUp,moveDown])
-        let moveLoop = SCNAction.repeatForever(moveSequence)
-        colorNode.runAction(moveLoop)
+    
+        colorNode.animateUpAndDown()
+        colorNode.highlightNodeWithDurarion(5)
         
         roomNode?.addChildNode(newHotSpotNode)
         roomNode?.addChildNode(colorNode)
@@ -408,11 +415,11 @@ import ImageIO
         let zoom = Double(pinchRec.scale)
         switch pinchRec.state {
         case .began:
-            startScale = cameraNode.camera!.yFov
+            startScale = Double(cameraNode.camera!.fieldOfView)
         case .changed:
             let fov = startScale / zoom
             if fov > 20 && fov < 80 {
-                cameraNode.camera!.yFov = fov
+                cameraNode.camera!.fieldOfView = CGFloat(fov)
             }
         default:
             break
@@ -464,91 +471,3 @@ import ImageIO
     }
 }
 
-private extension CMDeviceMotion {
-    
-    func orientation() -> SCNVector4 {
-        
-        let attitude = self.attitude.quaternion
-        let attitudeQuanternion = GLKQuaternion(quanternion: attitude)
-        
-        let result: SCNVector4
-        
-        switch UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.interfaceOrientation {
-            
-        case .landscapeRight:
-            let cq1 = GLKQuaternionMakeWithAngleAndAxis(.pi/2, 0, 1, 0)
-            let cq2 = GLKQuaternionMakeWithAngleAndAxis(-(.pi/2), 1, 0, 0)
-            var quanternionMultiplier = GLKQuaternionMultiply(cq1, attitudeQuanternion)
-            quanternionMultiplier = GLKQuaternionMultiply(cq2, quanternionMultiplier)
-            
-            result = quanternionMultiplier.vector(for: .landscapeRight)
-            
-        case .landscapeLeft:
-            let cq1 = GLKQuaternionMakeWithAngleAndAxis(-(.pi/2), 0, 1, 0)
-            let cq2 = GLKQuaternionMakeWithAngleAndAxis(-(.pi/2), 1, 0, 0)
-            var quanternionMultiplier = GLKQuaternionMultiply(cq1, attitudeQuanternion)
-            quanternionMultiplier = GLKQuaternionMultiply(cq2, quanternionMultiplier)
-            
-            result = quanternionMultiplier.vector(for: .landscapeLeft)
-            
-        case .portraitUpsideDown:
-            let cq1 = GLKQuaternionMakeWithAngleAndAxis(-(.pi/2), 1, 0, 0)
-            let cq2 = GLKQuaternionMakeWithAngleAndAxis(.pi, 0, 0, 1)
-            var quanternionMultiplier = GLKQuaternionMultiply(cq1, attitudeQuanternion)
-            quanternionMultiplier = GLKQuaternionMultiply(cq2, quanternionMultiplier)
-            
-            result = quanternionMultiplier.vector(for: .portraitUpsideDown)
-            
-        default:
-            let clockwiseQuanternion = GLKQuaternionMakeWithAngleAndAxis(-(.pi/2), 1, 0, 0)
-            let quanternionMultiplier = GLKQuaternionMultiply(clockwiseQuanternion, attitudeQuanternion)
-            
-            result = quanternionMultiplier.vector(for: .portrait)
-        }
-        return result
-    }
-}
-
-private extension UIView {
-    func add(view: UIView) {
-        view.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(view)
-        let views = ["view": view]
-        let hConstraints = NSLayoutConstraint.constraints(withVisualFormat: "|[view]|", options: [], metrics: nil, views: views)    //swiftlint:disable:this line_length
-        let vConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[view]|", options: [], metrics: nil, views: views)  //swiftlint:disable:this line_length
-        self.addConstraints(hConstraints)
-        self.addConstraints(vConstraints)
-    }
-}
-
-private extension FloatingPoint {
-    func toDegrees() -> Self {
-        return self * 180 / .pi
-    }
-    
-    func toRadians() -> Self {
-        return self * .pi / 180
-    }
-}
-
-private extension GLKQuaternion {
-    init(quanternion: CMQuaternion) {
-        self.init(q: (Float(quanternion.x), Float(quanternion.y), Float(quanternion.z), Float(quanternion.w)))
-    }
-    
-    func vector(for orientation: UIInterfaceOrientation) -> SCNVector4 {
-        switch orientation {
-        case .landscapeRight:
-            return SCNVector4(x: -self.y, y: self.x, z: self.z, w: self.w)
-            
-        case .landscapeLeft:
-            return SCNVector4(x: self.y, y: -self.x, z: self.z, w: self.w)
-            
-        case .portraitUpsideDown:
-            return SCNVector4(x: -self.x, y: -self.y, z: self.z, w: self.w)
-            
-        default:
-            return SCNVector4(x: self.x, y: self.y, z: self.z, w: self.w)
-        }
-    }
-}

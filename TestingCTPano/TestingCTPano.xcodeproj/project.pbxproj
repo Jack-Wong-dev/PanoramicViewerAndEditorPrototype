@@ -7,11 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A0D986D23E5FF2A00DBBF36 /* GraphData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D986C23E5FF2A00DBBF36 /* GraphData.swift */; };
 		0A0D987123E8853C00DBBF36 /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D987023E8853C00DBBF36 /* EditorViewController.swift */; };
 		0A0D987323EA0D3D00DBBF36 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D987223EA0D3D00DBBF36 /* extensions.swift */; };
 		0A7849BC23E33B1000F62BFB /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849BB23E33B1000F62BFB /* Toast.swift */; };
-		0A7849F223E3B1BF00F62BFB /* Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849F123E3B1BF00F62BFB /* Archive.swift */; };
 		0A7849F423E4C10700F62BFB /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7849F323E4C10700F62BFB /* Room.swift */; };
 		0AAC48BC23D75BE4003B47EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48BB23D75BE4003B47EA /* AppDelegate.swift */; };
 		0AAC48BE23D75BE4003B47EA /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48BD23D75BE4003B47EA /* SceneDelegate.swift */; };
@@ -19,9 +17,15 @@
 		0AAC48C523D75BE7003B47EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AAC48C423D75BE7003B47EA /* Assets.xcassets */; };
 		0AAC48C823D75BE7003B47EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AAC48C623D75BE7003B47EA /* LaunchScreen.storyboard */; };
 		0AAC48D323D75BE7003B47EA /* TestingCTPanoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48D223D75BE7003B47EA /* TestingCTPanoTests.swift */; };
-		0AAC48DF23D75C8F003B47EA /* CTPanoramaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */; };
-		0AAC48E123D75DB5003B47EA /* CTPieSliceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */; };
+		0AAC48DF23D75C8F003B47EA /* PanoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC48DE23D75C8F003B47EA /* PanoView.swift */; };
 		0AC16A3423DF8B6000C58623 /* PanoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC16A3323DF8B6000C58623 /* PanoViewController.swift */; };
+		0AC4B31A246A3D7D00278E54 /* FloatyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B312246A3D7C00278E54 /* FloatyViewController.swift */; };
+		0AC4B31B246A3D7D00278E54 /* FloatyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B313246A3D7C00278E54 /* FloatyItem.swift */; };
+		0AC4B31C246A3D7D00278E54 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B315246A3D7D00278E54 /* Extension.swift */; };
+		0AC4B31D246A3D7D00278E54 /* FloatyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B316246A3D7D00278E54 /* FloatyManager.swift */; };
+		0AC4B31E246A3D7D00278E54 /* Floaty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B317246A3D7D00278E54 /* Floaty.swift */; };
+		0AC4B31F246A3D7D00278E54 /* FloatyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B318246A3D7D00278E54 /* FloatyDelegate.swift */; };
+		0AC4B320246A3D7D00278E54 /* FloatyWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC4B319246A3D7D00278E54 /* FloatyWindow.swift */; };
 		0AF4ECE223EE08ED00A73DDF /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4ECE123EE08EC00A73DDF /* EditorView.swift */; };
 		0AF4ECE423F20A0200A73DDF /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF4ECE323F20A0200A73DDF /* Graph.swift */; };
 /* End PBXBuildFile section */
@@ -37,11 +41,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0A0D986C23E5FF2A00DBBF36 /* GraphData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphData.swift; sourceTree = "<group>"; };
 		0A0D987023E8853C00DBBF36 /* EditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; };
 		0A0D987223EA0D3D00DBBF36 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		0A7849BB23E33B1000F62BFB /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
-		0A7849F123E3B1BF00F62BFB /* Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archive.swift; sourceTree = "<group>"; };
 		0A7849F323E4C10700F62BFB /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		0AAC48B823D75BE4003B47EA /* TestingCTPano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingCTPano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AAC48BB23D75BE4003B47EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -53,9 +55,16 @@
 		0AAC48CE23D75BE7003B47EA /* TestingCTPanoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestingCTPanoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AAC48D223D75BE7003B47EA /* TestingCTPanoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingCTPanoTests.swift; sourceTree = "<group>"; };
 		0AAC48D423D75BE7003B47EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTPanoramaView.swift; sourceTree = "<group>"; };
-		0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CTPieSliceView.swift; sourceTree = "<group>"; };
+		0AAC48DE23D75C8F003B47EA /* PanoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoView.swift; sourceTree = "<group>"; };
 		0AC16A3323DF8B6000C58623 /* PanoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoViewController.swift; sourceTree = "<group>"; };
+		0AC4B312246A3D7C00278E54 /* FloatyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatyViewController.swift; sourceTree = "<group>"; };
+		0AC4B313246A3D7C00278E54 /* FloatyItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatyItem.swift; sourceTree = "<group>"; };
+		0AC4B314246A3D7D00278E54 /* Floaty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Floaty.h; sourceTree = "<group>"; };
+		0AC4B315246A3D7D00278E54 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		0AC4B316246A3D7D00278E54 /* FloatyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatyManager.swift; sourceTree = "<group>"; };
+		0AC4B317246A3D7D00278E54 /* Floaty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Floaty.swift; sourceTree = "<group>"; };
+		0AC4B318246A3D7D00278E54 /* FloatyDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatyDelegate.swift; sourceTree = "<group>"; };
+		0AC4B319246A3D7D00278E54 /* FloatyWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloatyWindow.swift; sourceTree = "<group>"; };
 		0AF4ECE123EE08EC00A73DDF /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
 		0AF4ECE323F20A0200A73DDF /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,23 +91,16 @@
 			isa = PBXGroup;
 			children = (
 				0A7849F323E4C10700F62BFB /* Room.swift */,
-				0A0D986C23E5FF2A00DBBF36 /* GraphData.swift */,
 				0AF4ECE323F20A0200A73DDF /* Graph.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
 		};
-		0A7849F023E3B1A900F62BFB /* ArchiveCode */ = {
-			isa = PBXGroup;
-			children = (
-				0A7849F123E3B1BF00F62BFB /* Archive.swift */,
-			);
-			path = ArchiveCode;
-			sourceTree = "<group>";
-		};
 		0AA6D0C523DF543C008122BB /* View */ = {
 			isa = PBXGroup;
 			children = (
+				0AAC48DE23D75C8F003B47EA /* PanoView.swift */,
+				0AF4ECE123EE08EC00A73DDF /* EditorView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -127,7 +129,7 @@
 				0A7849EB23E3770400F62BFB /* Model */,
 				0AC16A3223DF848800C58623 /* Controller */,
 				0AA6D0C523DF543C008122BB /* View */,
-				0AAC48DD23D75C45003B47EA /* Source */,
+				0AAC48DD23D75C45003B47EA /* Extensions */,
 				0AC16A3523DF8E6600C58623 /* Other */,
 				0AAC48BB23D75BE4003B47EA /* AppDelegate.swift */,
 				0AAC48BD23D75BE4003B47EA /* SceneDelegate.swift */,
@@ -148,16 +150,12 @@
 			path = TestingCTPanoTests;
 			sourceTree = "<group>";
 		};
-		0AAC48DD23D75C45003B47EA /* Source */ = {
+		0AAC48DD23D75C45003B47EA /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0AAC48DE23D75C8F003B47EA /* CTPanoramaView.swift */,
-				0AAC48E023D75DB5003B47EA /* CTPieSliceView.swift */,
-				0A7849BB23E33B1000F62BFB /* Toast.swift */,
 				0A0D987223EA0D3D00DBBF36 /* extensions.swift */,
-				0AF4ECE123EE08EC00A73DDF /* EditorView.swift */,
 			);
-			path = Source;
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		0AC16A3223DF848800C58623 /* Controller */ = {
@@ -172,9 +170,25 @@
 		0AC16A3523DF8E6600C58623 /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				0A7849F023E3B1A900F62BFB /* ArchiveCode */,
+				0A7849BB23E33B1000F62BFB /* Toast.swift */,
+				0AC4B311246A3D6E00278E54 /* FAB */,
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		0AC4B311246A3D6E00278E54 /* FAB */ = {
+			isa = PBXGroup;
+			children = (
+				0AC4B315246A3D7D00278E54 /* Extension.swift */,
+				0AC4B314246A3D7D00278E54 /* Floaty.h */,
+				0AC4B317246A3D7D00278E54 /* Floaty.swift */,
+				0AC4B318246A3D7D00278E54 /* FloatyDelegate.swift */,
+				0AC4B313246A3D7C00278E54 /* FloatyItem.swift */,
+				0AC4B316246A3D7D00278E54 /* FloatyManager.swift */,
+				0AC4B312246A3D7C00278E54 /* FloatyViewController.swift */,
+				0AC4B319246A3D7D00278E54 /* FloatyWindow.swift */,
+			);
+			path = FAB;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -278,19 +292,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A7849F223E3B1BF00F62BFB /* Archive.swift in Sources */,
+				0AC4B320246A3D7D00278E54 /* FloatyWindow.swift in Sources */,
+				0AC4B31D246A3D7D00278E54 /* FloatyManager.swift in Sources */,
 				0AF4ECE423F20A0200A73DDF /* Graph.swift in Sources */,
+				0AC4B31F246A3D7D00278E54 /* FloatyDelegate.swift in Sources */,
 				0AC16A3423DF8B6000C58623 /* PanoViewController.swift in Sources */,
 				0A7849BC23E33B1000F62BFB /* Toast.swift in Sources */,
 				0A0D987323EA0D3D00DBBF36 /* extensions.swift in Sources */,
 				0A0D987123E8853C00DBBF36 /* EditorViewController.swift in Sources */,
-				0AAC48DF23D75C8F003B47EA /* CTPanoramaView.swift in Sources */,
-				0AAC48E123D75DB5003B47EA /* CTPieSliceView.swift in Sources */,
-				0A0D986D23E5FF2A00DBBF36 /* GraphData.swift in Sources */,
+				0AC4B31E246A3D7D00278E54 /* Floaty.swift in Sources */,
+				0AAC48DF23D75C8F003B47EA /* PanoView.swift in Sources */,
 				0AAC48BC23D75BE4003B47EA /* AppDelegate.swift in Sources */,
 				0AAC48BE23D75BE4003B47EA /* SceneDelegate.swift in Sources */,
+				0AC4B31C246A3D7D00278E54 /* Extension.swift in Sources */,
+				0AC4B31B246A3D7D00278E54 /* FloatyItem.swift in Sources */,
 				0AF4ECE223EE08ED00A73DDF /* EditorView.swift in Sources */,
 				0A7849F423E4C10700F62BFB /* Room.swift in Sources */,
+				0AC4B31A246A3D7D00278E54 /* FloatyViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

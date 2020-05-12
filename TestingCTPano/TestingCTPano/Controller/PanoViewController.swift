@@ -1,44 +1,36 @@
-//
-//  PanoViewController.swift
-//  TestingCTPano
-//
 //  Created by Jack Wong on 1/27/20.
 //  Copyright © 2020 Jack Wong. All rights reserved.
 //
 
 import UIKit
 
-class PanoViewController: UIViewController, UIToolbarDelegate {
+class PanoVC: UIViewController, UIToolbarDelegate {
     
     lazy private var toolbar: UIToolbar = {
         let tb = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 50))
-        tb.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        tb.backgroundColor = UIColor.init(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.4)
-        tb.isTranslucent = true
+//        tb.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+//        tb.backgroundColor = UIColor.init(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.4)
+//        tb.isTranslucent = true
         tb.items = [closeButton, flexibleSpace, motionButton]
         tb.isHidden = true
         
         return tb
     }()
     
-    lazy private var panoView: CTPanoramaView = {
-        var pV = CTPanoramaView()
+    lazy private var panoView: PanoView = {
+        var pV = PanoView()
         return pV
     }()
-    
-    lazy private var compassView: CTPieSliceView = {
-        let cV = CTPieSliceView()
-        cV.isHidden = true
-        return cV
-    }()
-    
+
     lazy private var motionButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(motionTypeTapped))
+        button.tintColor = .systemGreen
         return button
     }()
     
     lazy private var closeButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: nil)
+        let button = UIBarButtonItem(image: UIImage(systemName: "xmark.square.fill"), style: UIBarButtonItem.Style.done, target: self, action: #selector(dismissVC))
+        button.tintColor = .systemGreen
         return button
     }()
     
@@ -47,29 +39,16 @@ class PanoViewController: UIViewController, UIToolbarDelegate {
         return button
     }()
     
-    //    lazy private var optionsButton: UIBarButtonItem = {
-    //        let button = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem.add, target: self, action: nil)
-    //           return button
-    //    }()
-    
     var selectedGraph = Graph()
     
     private func commonInit(){
-//        panoView.pursuitGraph = selectedGraph
-//               print("Populate graph")
-//        selectedGraph =  GraphData.manager.populateGraph()
-//               print("Common Init")
         addSubviews()
         setConstraints()
-        panoView.compass = compassView
         panoView.toolbar = toolbar
-       
-//        panoView.commonInit()
     }
     
     private func addSubviews(){
         view.addSubview(panoView)
-        view.addSubview(compassView)
         view.addSubview(toolbar)
     }
     
@@ -91,7 +70,10 @@ class PanoViewController: UIViewController, UIToolbarDelegate {
 }
 
 //MARK:- Panoramic Methods
-extension PanoViewController{
+extension PanoVC{
+    @objc private func dismissVC() {
+        dismiss(animated: true, completion: nil)
+    }
     
     @objc private func motionTypeTapped(){
         if panoView.controlMethod == .touch{
@@ -101,19 +83,14 @@ extension PanoViewController{
         }
         panoView.hudToggle = .hide
     }
-    
-    @objc private func dismiss(){
-        dismiss(animated: true, completion: nil)
-    }
 }
 
 
 //MARK:- Constraints
-extension PanoViewController {
+extension PanoVC {
     
     private func setConstraints() {
         setPanoViewConstraints()
-        setCompassPieConstraints()
         setToolbarConstraints()
     }
     
@@ -127,17 +104,6 @@ extension PanoViewController {
             self.panoView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
         
-    }
-    
-    private func setCompassPieConstraints(){
-        compassView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            compassView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            compassView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            compassView.heightAnchor.constraint(equalToConstant: 40),
-            compassView.widthAnchor.constraint(equalToConstant: 40)
-        ])
     }
     
     private func setToolbarConstraints(){

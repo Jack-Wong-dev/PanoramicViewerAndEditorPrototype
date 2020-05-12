@@ -1,36 +1,6 @@
 import UIKit
 import SceneKit
 
-public class Room{
-    
-    var name: String?
-    var imageURL: String?
-    var hotspots: [String:Hotspot]
-    
-    init() {
-        self.hotspots = [String:Hotspot]()
-    }
-    
-    func getHotspot(destinationName: String) -> Hotspot? {
-        return hotspots[destinationName]
-    }
-}
-
-public class Hotspot{
-    var name: String?
-    var destination: Room
-    var coordinates: (Float, Float, Float)
-    
-    init() {
-        self.destination = Room()
-        self.coordinates = (0, 0, 0)
-    }
-    
-    func updatePosition(newPosition: SCNVector3) {
-        self.coordinates = (newPosition.x, newPosition.y, newPosition.z)
-    }
-}
-
 public class Graph {
     
     var floorPlan: [String:Room]
@@ -86,7 +56,7 @@ public class Graph {
         
         guard let sourceName = source.name, let destinationName = destination.name else{ return }
         hotspot.name = destinationName
-        hotspot.destination = destination   
+        hotspot.destination = destination
         hotspot.coordinates = coordinates
         source.hotspots[destinationName] = hotspot
         
@@ -110,6 +80,11 @@ public class Graph {
         floorPlan[sourceName]?.hotspots[destinationName]?.coordinates = newPosition
     }
     
+    func updateStaringAngle(source: Room, angle: Float){
+        print("New Angle: \(angle)")
+        source.startingAngle = angle
+    }
+    
     init() {
         self.floorPlan = [String:Room]()
     }
@@ -125,7 +100,7 @@ class GraphData{
         
         //Creating Rooms
         let flexSpace = newGraph.addRoom(name: "flexspace", imageURL: "flexspace")
-        
+                
         let classroom2 = newGraph.addRoom(name: "classroom2", imageURL: "classroom2")
         
         let television = newGraph.addRoom(name: "tv", imageURL: "bioshock")
@@ -151,3 +126,63 @@ class GraphData{
         return newGraph
     }
 }
+
+
+class EditorGraphData{
+    
+    static let manager = EditorGraphData()
+    
+    func populateGraph() -> Graph {
+        
+        let newGraph = Graph()
+        
+        //Creating Rooms
+        let flexSpace = newGraph.addRoom(name: "flexspace", imageURL: "flexspace")
+        
+//        flexSpace.startingAngle = 90
+
+        let _ = newGraph.addRoom(name: "classroom2", imageURL: "classroom2")
+        
+        let _ = newGraph.addRoom(name: "tv", imageURL: "bioshock")
+        
+        let _ = newGraph.addRoom(name: "outside", imageURL: "PursuitOutside")
+        
+//        //Creating Hotspots
+//        newGraph.addHotspot(source: flexSpace, destination: classroom2, coordinates: (-9.892502, -0.8068286, -1.216294))
+//
+//        //Room -> Hotspot[name of destination] -> update coordinates
+//        newGraph.updatePosition(source: classroom2, destination: flexSpace, newPosition: (1.0734094, -0.56759614, 9.925603))
+//
+//        newGraph.addHotspot(source: flexSpace, destination: television, coordinates: (-2.0663686, -0.24952725, -9.780738))
+//
+//        newGraph.updatePosition(source: television, destination: flexSpace, newPosition: (4.5396996, 0.098314874,  -8.908977))
+//
+//        newGraph.addHotspot(source: classroom2, destination: outside, coordinates: (2.5361452, -2.2858243, -9.398544))
+//
+//        newGraph.updatePosition(source: outside, destination: classroom2, newPosition: (-8.680619, 4.911766, -0.72091013))
+//
+        newGraph.firstRoomID = "flexspace"
+        
+        return newGraph
+    }
+}
+
+class AllRoomData {
+    
+   static var imageCollection = [RoomData]()
+    
+    func addRoomData(data: RoomData){
+     AllRoomData.imageCollection.append(data)
+    }
+    
+}
+
+struct RoomData {
+    var image: UIImage
+    var name: String
+}
+
+protocol DataSendingProtocol: AnyObject {
+    func sendDataToCreateListingVC(roomData: RoomData)
+}
+
