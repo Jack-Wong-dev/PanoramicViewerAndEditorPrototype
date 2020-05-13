@@ -19,6 +19,7 @@ Users can replicate the example tour by using the tools provided by the floating
 right corner of the screen.  
 
 ## GIFS/Images
+![Editor](Images/Editor.PNG)
 
 ## Frameworks used
 - SceneKit
