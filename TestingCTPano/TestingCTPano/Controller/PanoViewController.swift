@@ -29,7 +29,7 @@ class PanoVC: UIViewController, UIToolbarDelegate {
     }()
     
     lazy private var closeButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "xmark.square.fill"), style: UIBarButtonItem.Style.done, target: self, action: #selector(dismissVC))
+        let button = UIBarButtonItem(image: UIImage(systemName: "chevron.left.square"), style: UIBarButtonItem.Style.done, target: self, action: #selector(dismissVC))
         button.tintColor = .systemGreen
         return button
     }()

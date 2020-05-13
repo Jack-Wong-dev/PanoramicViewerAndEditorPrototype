@@ -12,10 +12,6 @@ import ImageIO
     case hide
 }
 
-@objc public protocol CTPanoramaCompass {
-    func updateUI(rotationAngle: CGFloat, fieldOfViewAngle: CGFloat)
-}
-
 @objc public enum CTPanoramaControlMethod: Int {
     case motion
     case touch
@@ -26,15 +22,11 @@ import ImageIO
     
     var imageDictionary = [String: UIImage]()
     
-    
     // MARK: Public properties
-    //    public var pursuitGraph = Graph()
     @objc public var toolbar: UIToolbar?
-    @objc public var compass: CTPanoramaCompass?
     @objc public var movementHandler: ((_ rotationAngle: CGFloat, _ fieldOfViewAngle: CGFloat) -> Void)?
     @objc public var panSpeed = CGPoint(x: 0.005, y: 0.005)
     @objc public var startAngle: Float = 0
-    
     
     @objc public var overlayView: UIView? {
         didSet {
@@ -375,7 +367,6 @@ import ImageIO
     }
     
     private func reportMovement(_ rotationAngle: CGFloat, _ fieldOfViewAngle: CGFloat, callHandler: Bool = true) {
-        compass?.updateUI(rotationAngle: rotationAngle, fieldOfViewAngle: fieldOfViewAngle)
         if callHandler {
             movementHandler?(rotationAngle, fieldOfViewAngle)
         }

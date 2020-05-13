@@ -22,11 +22,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.windowScene = windowScene
         
-        let graph = EditorGraphData.manager.populateGraph()
-        let firstRoom = graph.getRoom(name: graph.firstRoomID!)
-        let tourVC = TourEditorVC(graph: graph, room: firstRoom!)
+//        let graph = EditorGraphData.manager.populateGraph()
+//        let firstRoom = graph.getRoom(name: graph.firstRoomID!)
+//        let tourVC = TourEditorVC(graph: graph, room: firstRoom!)
         
-        window?.rootViewController = tourVC
+        let selectVC = SelectionViewController()
+        
+        window?.rootViewController = selectVC
 
 //        window?.rootViewController = PanoViewController()
         window?.makeKeyAndVisible()
