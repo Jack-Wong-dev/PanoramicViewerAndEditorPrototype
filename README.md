@@ -31,4 +31,7 @@ right corner of the screen.
 - Cacheing Images
 - User image upload
 
+### Goals
+- Migrating over to the SWIFTUI framework, keeping both the UIKIT and SWIFTUI projects in the same repository
+
 
