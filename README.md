@@ -1,10 +1,10 @@
-# PanoramicViewerPrototype
+# VirtualTourViewerAndEditor
 
 ## Introduction
 This is a WIP project that turns equirectangular images (e.g photosphere) into panoramic viewing experiences.  
 The objective of this project is to create the editing tools to make a DIY interactive panoramas experience.
 
-This project serves as the R&D of the virtual tour and editor experience of my capstone team's project [Truview](https://github.com/NormanLiana/TruView)
+This project served as the backbone of the virtual tour and editor experience of my capstone team's project [Truview](https://github.com/NormanLiana/TruView)
 
 ## Usage
 This project provides example photosphere images taken with Google's Street View camera.
